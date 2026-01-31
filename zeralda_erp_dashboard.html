@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Zeralda ERP Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
+            --purple-color: #8b5cf6;
+            --dark-color: #1f2937;
+            --light-color: #f3f4f6;
+            --white-color: #ffffff;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        body.rtl {
+            direction: rtl;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-image {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        /* Language Indicator - للعرض فقط */
+        .language-indicator {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 18px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .language-indicator:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .language-indicator:active {
+            transform: scale(0.98);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: var(--white-color);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        body.rtl .sidebar {
+            left: auto;
+            right: 0;
+        }
+
+        .menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        body.rtl .menu-item {
+            border-left: none;
+            border-right: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: var(--light-color);
+            border-left-color: var(--primary-color);
+        }
+
+        body.rtl .menu-item:hover {
+            border-right-color: var(--primary-color);
+        }
+
+        .menu-item.active {
+            background: var(--light-color);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        body.rtl .menu-item.active {
+            border-right-color: var(--primary-color);
+        }
+
+        .menu-item i {
+            width: 25px;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        body.rtl .main-content {
+            margin-left: 0;
+            margin-right: var(--sidebar-width);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+        }
+
+        .stat-icon.blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .stat-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .stat-icon.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .stat-icon.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .stat-icon.pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .stat-icon.indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+
+        .stat-details h3 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-details p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        /* Module Cards */
+        .modules-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .module-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 5px solid transparent;
+            text-decoration: none;
+            color: var(--dark-color);
+            display: block;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .module-card.blue { border-left-color: #2563eb; }
+        .module-card.green { border-left-color: #10b981; }
+        .module-card.orange { border-left-color: #f59e0b; }
+        .module-card.red { border-left-color: #ef4444; }
+        .module-card.purple { border-left-color: #8b5cf6; }
+        .module-card.cyan { border-left-color: #06b6d4; }
+        .module-card.pink { border-left-color: #ec4899; }
+        .module-card.indigo { border-left-color: #6366f1; }
+        .module-card.teal { border-left-color: #14b8a6; }
+
+        .module-card.coming-soon {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            border-left-color: #f59e0b;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card.coming-soon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .module-card.coming-soon:hover {
+            transform: scale(1.02);
+        }
+
+        .coming-soon-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .module-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .module-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .module-description {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .module-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .module-features li {
+            padding: 6px 0;
+            color: #6b7280;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .module-features li i {
+            font-size: 12px;
+        }
+
+        .module-features li i.fa-check-circle {
+            color: var(--success-color);
+        }
+
+        .module-features li i.fa-hourglass-half {
+            color: var(--warning-color);
+        }
+
+        .quick-actions {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 15px 20px;
+            border: 2px solid var(--light-color);
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--dark-color);
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .action-btn i {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .banner-content h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .banner-content p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .banner-icon {
+            font-size: 80px;
+            opacity: 0.2;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            body.rtl .sidebar {
+                transform: translateX(100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            body.rtl .main-content {
+                margin-right: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <i class="fas fa-bars mobile-menu-btn" onclick="toggleSidebar()"></i>
+            <div class="logo">
+                <img src="logo.png" alt="Company Logo" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <i class="fas fa-building" style="display:none;"></i>
+                <span id="app-title">Zeralda ERP Tools</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <!-- عرض اللغة الحالية فقط مع رابط للإعدادات -->
+            <a href="settings.html" class="language-indicator" title="Change language in Settings">
+                <i class="fas fa-globe"></i>
+                <span id="current-lang">English</span>
+                <i class="fas fa-cog" style="font-size: 12px; opacity: 0.7;"></i>
+            </a>
+            <div class="user-info">
+                <div class="user-avatar">KZ</div>
+                <div>
+                    <div style="font-weight: 600;">Karim Zitouni</div>
+                    <div style="font-size: 12px; opacity: 0.9;">Administrator</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="menu">
+            <a class="menu-item active" href="zeralda_erp_dashboard.html">
+                <i class="fas fa-home"></i>
+                <span class="menu-text" data-en="Dashboard" data-ar="لوحة التحكم" data-fr="Tableau de bord">Dashboard</span>
+            </a>
+            <a class="menu-item" href="sales_management.html">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="menu-text" data-en="Sales Management" data-ar="إدارة المبيعات" data-fr="Gestion des ventes">Sales Management</span>
+            </a>
+            <a class="menu-item" href="purchasing_management.html">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="menu-text" data-en="Purchasing" data-ar="المشتريات" data-fr="Achats">Purchasing</span>
+            </a>
+            <a class="menu-item" href="inventory_management.html">
+                <i class="fas fa-boxes"></i>
+                <span class="menu-text" data-en="Inventory" data-ar="المخزون" data-fr="Inventaire">Inventory</span>
+            </a>
+            <a class="menu-item" href="finance_accounting.html">
+                <i class="fas fa-dollar-sign"></i>
+                <span class="menu-text" data-en="Finance & Accounting" data-ar="المالية والحسابات" data-fr="Finance et Comptabilité">Finance & Accounting</span>
+            </a>
+            <a class="menu-item" href="hr_management.html">
+                <i class="fas fa-users"></i>
+                <span class="menu-text" data-en="Human Resources" data-ar="الموارد البشرية" data-fr="Ressources Humaines">Human Resources</span>
+            </a>
+            <a class="menu-item" href="crm_management.html">
+                <i class="fas fa-user-friends"></i>
+                <span class="menu-text" data-en="Customer Relations" data-ar="علاقات العملاء" data-fr="Relations Clients">Customer Relations</span>
+            </a>
+            <a class="menu-item" href="reports_analytics.html">
+                <i class="fas fa-chart-line"></i>
+                <span class="menu-text" data-en="Reports & Analytics" data-ar="التقارير والتحليلات" data-fr="Rapports et Analyses">Reports & Analytics</span>
+            </a>
+            <a class="menu-item" href="settings.html">
+                <i class="fas fa-cog"></i>
+                <span class="menu-text" data-en="Settings" data-ar="الإعدادات" data-fr="Paramètres">Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="banner-content">
+                <h2 data-en="Welcome back, Karim!" data-ar="مرحباً بعودتك، كريم!" data-fr="Bienvenue, Karim!">Welcome back, Karim!</h2>
+                <p data-en="Here's what's happening with your business today" data-ar="إليك ما يحدث في عملك اليوم" data-fr="Voici ce qui se passe aujourd'hui">Here's what's happening with your business today</p>
+            </div>
+            <div class="banner-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+        </div>
+
+        <!-- المحتوى كما هو... (نفس الكود السابق للـ Stats, Modules, Charts) -->
+        <!-- ... باقي المحتوى ... -->
+    </div>
+
+    <script>
+        // Language Translations
+        const translations = {
+            en: {
+                appTitle: 'Zeralda ERP Tools',
+                currentLang: 'English'
+            },
+            ar: {
+                appTitle: 'أدوات زرالدة لتخطيط موارد المؤسسة',
+                currentLang: 'العربية'
+            },
+            fr: {
+                appTitle: 'Outils ERP Zeralda',
+                currentLang: 'Français'
+            }
+        };
+
+        // Load Language - بدون إمكانية التغيير
+        function loadLanguage() {
+            const savedLang = localStorage.getItem('preferred-language') || 'en';
+            const body = document.body;
+            const html = document.documentElement;
+            
+            if (savedLang === 'ar') {
+                body.classList.add('rtl');
+                html.setAttribute('dir', 'rtl');
+                html.setAttribute('lang', 'ar');
+            } else {
+                body.classList.remove('rtl');
+                html.setAttribute('dir', 'ltr');
+                html.setAttribute('lang', savedLang);
+            }
+
+            document.querySelectorAll('[data-' + savedLang + ']').forEach(element => {
+                element.textContent = element.getAttribute('data-' + savedLang);
+            });
+
+            document.getElementById('app-title').textContent = translations[savedLang].appTitle;
+            document.getElementById('current-lang').textContent = translations[savedLang].currentLang;
+        }
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Coming Soon Alert
+        function showComingSoonAlert() {
+            const lang = localStorage.getItem('preferred-language') || 'en';
+            const messages = {
+                en: '🚀 Exciting new modules coming in version 1.1.0!\n\n✨ Stay tuned for:\n• MySQL Database Integration\n• Mobile App\n• REST API\n• Dark Mode\n• And much more!',
+                ar: '🚀 وحدات جديدة مثيرة قادمة في النسخة 1.1.0!\n\n✨ ترقبوا:\n• تكامل قاعدة بيانات MySQL\n• تطبيق موبايل\n• واجهة برمجة REST API\n• الوضع الليلي\n• والمزيد!',
+                fr: '🚀 Nouveaux modules passionnants dans la version 1.1.0!\n\n✨ Restez à l\'écoute:\n• Intégration MySQL\n• Application Mobile\n• API REST\n• Mode Sombre\n• Et bien plus!'
+            };
+            alert(messages[lang]);
+        }
+
+        // Initialize
+        window.onload = function() {
+            loadLanguage();
+
+            // Initialize Charts
+            // ... (كود الرسوم البيانية كما هو)
+        };
+    </script>
+</body>
+</html>

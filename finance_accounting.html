@@ -1,0 +1,2459 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance & Accounting - Zeralda ERP Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
+            --purple-color: #8b5cf6;
+            --dark-color: #1f2937;
+            --light-color: #f3f4f6;
+            --white-color: #ffffff;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        body.rtl {
+            direction: rtl;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-image {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .language-selector {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .language-selector:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: var(--white-color);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        body.rtl .sidebar {
+            left: auto;
+            right: 0;
+        }
+
+        .menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        body.rtl .menu-item {
+            border-left: none;
+            border-right: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: var(--light-color);
+            border-left-color: var(--primary-color);
+        }
+
+        body.rtl .menu-item:hover {
+            border-right-color: var(--primary-color);
+        }
+
+        .menu-item.active {
+            background: var(--light-color);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        body.rtl .menu-item.active {
+            border-right-color: var(--primary-color);
+        }
+
+        .menu-item i {
+            width: 25px;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        body.rtl .main-content {
+            margin-left: 0;
+            margin-right: var(--sidebar-width);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-icon.blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .stat-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .stat-icon.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .stat-icon.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        .stat-change.negative {
+            color: var(--danger-color);
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--light-color);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 18px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background: var(--light-color);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Action Buttons */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light-color);
+            padding: 10px 20px;
+            border-radius: 25px;
+            gap: 10px;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--info-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--light-color);
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-color);
+            white-space: nowrap;
+        }
+
+        body.rtl th {
+            text-align: right;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--light-color);
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-posted { background: #d1fae5; color: #065f46; }
+        .status-draft { background: #fef3c7; color: #92400e; }
+        .status-approved { background: #dbeafe; color: #1e40af; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+
+        .action-icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-icon.edit {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .action-icon.delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-icon.view {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .action-icon.print {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .action-icon:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--light-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 2px solid var(--light-color);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 2px solid var(--light-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Chart of Accounts Tree */
+        .account-tree {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .account-category {
+            margin-bottom: 20px;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-header:hover {
+            transform: translateX(5px);
+        }
+
+        body.rtl .category-header:hover {
+            transform: translateX(-5px);
+        }
+
+        .category-header h3 {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-accounts {
+            margin-top: 10px;
+            margin-left: 20px;
+            border-left: 3px solid var(--light-color);
+            padding-left: 20px;
+        }
+
+        body.rtl .category-accounts {
+            margin-left: 0;
+            margin-right: 20px;
+            border-left: none;
+            border-right: 3px solid var(--light-color);
+            padding-left: 0;
+            padding-right: 20px;
+        }
+
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 5px 0;
+            background: var(--light-color);
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .account-item:hover {
+            background: #e5e7eb;
+            transform: translateX(5px);
+        }
+
+        body.rtl .account-item:hover {
+            transform: translateX(-5px);
+        }
+
+        .account-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .account-code {
+            font-weight: 700;
+            color: var(--primary-color);
+            min-width: 80px;
+        }
+
+        .account-balance {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .balance-debit {
+            color: var(--success-color);
+        }
+
+        .balance-credit {
+            color: var(--danger-color);
+        }
+
+        /* Financial Reports */
+        .report-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .report-header h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .report-period {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .report-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            padding: 12px 15px;
+            background: var(--light-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .report-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--light-color);
+        }
+
+        .report-row.total {
+            font-weight: 700;
+            font-size: 18px;
+            background: var(--light-color);
+            border-radius: 8px;
+            border: none;
+            margin-top: 10px;
+        }
+
+        .report-row.grand-total {
+            font-weight: 700;
+            font-size: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 10px;
+            border: none;
+            margin-top: 15px;
+        }
+
+        /* Bank Account Card */
+        .bank-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .bank-card {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 25px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .bank-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .bank-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .bank-logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .bank-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .bank-number {
+            font-size: 14px;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .bank-balance {
+            font-size: 32px;
+            font-weight: 700;
+            margin-top: 15px;
+        }
+
+        .bank-balance-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Language Dropdown */
+        .language-dropdown {
+            position: relative;
+        }
+
+        .language-options {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            margin-top: 10px;
+            overflow: hidden;
+            display: none;
+            z-index: 1001;
+        }
+
+        .language-dropdown:hover .language-options {
+            display: block;
+        }
+
+        .language-option {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark-color);
+        }
+
+        .language-option:hover {
+            background: var(--light-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Journal Entry Lines */
+        .journal-lines {
+            margin: 20px 0;
+        }
+
+        .journal-summary {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: var(--light-color);
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .summary-value {
+            font-size: 20px;
+        }
+
+        .summary-value.balanced {
+            color: var(--success-color);
+        }
+
+        .summary-value.unbalanced {
+            color: var(--danger-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            body.rtl .sidebar {
+                transform: translateX(100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            body.rtl .main-content {
+                margin-right: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bank-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <i class="fas fa-bars mobile-menu-btn" onclick="toggleSidebar()"></i>
+            <div class="logo">
+                <img src="logo.png" alt="Company Logo" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <i class="fas fa-building" style="display:none;"></i>
+                <span id="app-title">Zeralda ERP Tools</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="language-dropdown">
+                <div class="language-selector">
+                    <i class="fas fa-globe"></i>
+                    <span id="current-lang">English</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="language-options">
+                    <div class="language-option" onclick="changeLanguage('en')">
+                        <i class="fas fa-flag-usa"></i>
+                        <span>English</span>
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('ar')">
+                        <i class="fas fa-flag"></i>
+                        <span>العربية</span>
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('fr')">
+                        <i class="fas fa-flag"></i>
+                        <span>Français</span>
+                    </div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">KZ</div>
+                <div>
+                    <div style="font-weight: 600;">Karim Zitouni</div>
+                    <div style="font-size: 12px; opacity: 0.9;">Administrator</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="menu">
+            <a class="menu-item" href="zeralda_erp_dashboard.html">
+                <i class="fas fa-home"></i>
+                <span class="menu-text" data-en="Dashboard" data-ar="لوحة التحكم" data-fr="Tableau de bord">Dashboard</span>
+            </a>
+            <a class="menu-item" href="sales_management.html">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="menu-text" data-en="Sales Management" data-ar="إدارة المبيعات" data-fr="Gestion des ventes">Sales Management</span>
+            </a>
+            <a class="menu-item" href="purchasing_management.html">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="menu-text" data-en="Purchasing" data-ar="المشتريات" data-fr="Achats">Purchasing</span>
+            </a>
+            <a class="menu-item" href="inventory_management.html">
+                <i class="fas fa-boxes"></i>
+                <span class="menu-text" data-en="Inventory" data-ar="المخزون" data-fr="Inventaire">Inventory</span>
+            </a>
+            <a class="menu-item active">
+                <i class="fas fa-dollar-sign"></i>
+                <span class="menu-text" data-en="Finance & Accounting" data-ar="المالية والحسابات" data-fr="Finance et Comptabilité">Finance & Accounting</span>
+            </a>
+            <a class="menu-item" onclick="alert('Module coming soon!')">
+                <i class="fas fa-users"></i>
+                <span class="menu-text" data-en="Human Resources" data-ar="الموارد البشرية" data-fr="Ressources Humaines">Human Resources</span>
+            </a>
+            <a class="menu-item" onclick="alert('Module coming soon!')">
+                <i class="fas fa-user-friends"></i>
+                <span class="menu-text" data-en="Customer Relations" data-ar="علاقات العملاء" data-fr="Relations Clients">Customer Relations</span>
+            </a>
+            <a class="menu-item" onclick="alert('Module coming soon!')">
+                <i class="fas fa-chart-line"></i>
+                <span class="menu-text" data-en="Reports & Analytics" data-ar="التقارير والتحليلات" data-fr="Rapports et Analyses">Reports & Analytics</span>
+            </a>
+            <a class="menu-item" onclick="alert('Module coming soon!')">
+                <i class="fas fa-cog"></i>
+                <span class="menu-text" data-en="Settings" data-ar="الإعدادات" data-fr="Paramètres">Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" data-en="Finance & Accounting" data-ar="المالية والحسابات" data-fr="Finance et Comptabilité">Finance & Accounting</h1>
+                <div class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span data-en="Home" data-ar="الرئيسية" data-fr="Accueil">Home</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span data-en="Finance" data-ar="المالية" data-fr="Finance">Finance</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                </div>
+                <div class="stat-label" data-en="Total Assets" data-ar="إجمالي الأصول" data-fr="Total Actifs">Total Assets</div>
+                <div class="stat-value">$842,560</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>15.3% from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon green">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="stat-label" data-en="Total Revenue" data-ar="إجمالي الإيرادات" data-fr="Revenu Total">Total Revenue</div>
+                <div class="stat-value">$345,890</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>22.5% from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                </div>
+                <div class="stat-label" data-en="Total Expenses" data-ar="إجمالي المصروفات" data-fr="Dépenses Totales">Total Expenses</div>
+                <div class="stat-value">$198,450</div>
+                <div class="stat-change negative">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>8.3% from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                </div>
+                <div class="stat-label" data-en="Net Profit" data-ar="صافي الربح" data-fr="Bénéfice Net">Net Profit</div>
+                <div class="stat-value">$147,440</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>42.7% from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon cyan">
+                        <i class="fas fa-university"></i>
+                    </div>
+                </div>
+                <div class="stat-label" data-en="Bank Balance" data-ar="الرصيد البنكي" data-fr="Solde Bancaire">Bank Balance</div>
+                <div class="stat-value">$456,780</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Available funds</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon red">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                </div>
+                <div class="stat-label" data-en="Accounts Payable" data-ar="الحسابات الدائنة" data-fr="Comptes Fournisseurs">Accounts Payable</div>
+                <div class="stat-value">$89,340</div>
+                <div class="stat-change negative">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Due soon</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('accounts')">
+                    <i class="fas fa-list"></i>
+                    <span data-en="Chart of Accounts" data-ar="شجرة الحسابات" data-fr="Plan Comptable">Chart of Accounts</span>
+                </div>
+                <div class="tab" onclick="switchTab('journal')">
+                    <i class="fas fa-book"></i>
+                    <span data-en="Journal Entries" data-ar="القيود المحاسبية" data-fr="Écritures Journal">Journal Entries</span>
+                </div>
+                <div class="tab" onclick="switchTab('reports')">
+                    <i class="fas fa-file-alt"></i>
+                    <span data-en="Financial Reports" data-ar="التقارير المالية" data-fr="Rapports Financiers">Financial Reports</span>
+                </div>
+                <div class="tab" onclick="switchTab('banks')">
+                    <i class="fas fa-university"></i>
+                    <span data-en="Banks & Cash" data-ar="البنوك والخزينة" data-fr="Banques & Caisse">Banks & Cash</span>
+                </div>
+            </div>
+
+            <!-- Chart of Accounts Tab -->
+            <div id="accounts" class="tab-content active">
+                <div class="action-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search accounts..." data-en-placeholder="Search accounts..." data-ar-placeholder="البحث عن الحسابات..." data-fr-placeholder="Rechercher des comptes...">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="openModal('addAccount')">
+                            <i class="fas fa-plus"></i>
+                            <span data-en="New Account" data-ar="حساب جديد" data-fr="Nouveau Compte">New Account</span>
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-file-export"></i>
+                            <span data-en="Export" data-ar="تصدير" data-fr="Exporter">Export</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="account-tree">
+                    <!-- Assets -->
+                    <div class="account-category">
+                        <div class="category-header">
+                            <h3>
+                                <i class="fas fa-wallet"></i>
+                                <span data-en="Assets" data-ar="الأصول" data-fr="Actifs">Assets</span>
+                            </h3>
+                            <strong>$842,560</strong>
+                        </div>
+                        <div class="category-accounts">
+                            <div class="account-item" onclick="viewAccount('1010')">
+                                <div class="account-info">
+                                    <span class="account-code">1010</span>
+                                    <span data-en="Cash" data-ar="النقدية" data-fr="Caisse">Cash</span>
+                                </div>
+                                <div class="account-balance balance-debit">$45,230</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('1020')">
+                                <div class="account-info">
+                                    <span class="account-code">1020</span>
+                                    <span data-en="Bank Account" data-ar="الحساب البنكي" data-fr="Compte Bancaire">Bank Account</span>
+                                </div>
+                                <div class="account-balance balance-debit">$456,780</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('1030')">
+                                <div class="account-info">
+                                    <span class="account-code">1030</span>
+                                    <span data-en="Accounts Receivable" data-ar="الحسابات المدينة" data-fr="Comptes Clients">Accounts Receivable</span>
+                                </div>
+                                <div class="account-balance balance-debit">$125,340</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('1040')">
+                                <div class="account-info">
+                                    <span class="account-code">1040</span>
+                                    <span data-en="Inventory" data-ar="المخزون" data-fr="Stock">Inventory</span>
+                                </div>
+                                <div class="account-balance balance-debit">$215,210</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Liabilities -->
+                    <div class="account-category">
+                        <div class="category-header" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                            <h3>
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span data-en="Liabilities" data-ar="الخصوم" data-fr="Passifs">Liabilities</span>
+                            </h3>
+                            <strong>$156,890</strong>
+                        </div>
+                        <div class="category-accounts">
+                            <div class="account-item" onclick="viewAccount('2010')">
+                                <div class="account-info">
+                                    <span class="account-code">2010</span>
+                                    <span data-en="Accounts Payable" data-ar="الحسابات الدائنة" data-fr="Comptes Fournisseurs">Accounts Payable</span>
+                                </div>
+                                <div class="account-balance balance-credit">$89,340</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('2020')">
+                                <div class="account-info">
+                                    <span class="account-code">2020</span>
+                                    <span data-en="Tax Payable" data-ar="الضرائب المستحقة" data-fr="Taxes à Payer">Tax Payable</span>
+                                </div>
+                                <div class="account-balance balance-credit">$32,550</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('2030')">
+                                <div class="account-info">
+                                    <span class="account-code">2030</span>
+                                    <span data-en="Salaries Payable" data-ar="الرواتب المستحقة" data-fr="Salaires à Payer">Salaries Payable</span>
+                                </div>
+                                <div class="account-balance balance-credit">$35,000</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equity -->
+                    <div class="account-category">
+                        <div class="category-header" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                            <h3>
+                                <i class="fas fa-balance-scale"></i>
+                                <span data-en="Equity" data-ar="حقوق الملكية" data-fr="Capitaux Propres">Equity</span>
+                            </h3>
+                            <strong>$685,670</strong>
+                        </div>
+                        <div class="category-accounts">
+                            <div class="account-item" onclick="viewAccount('3010')">
+                                <div class="account-info">
+                                    <span class="account-code">3010</span>
+                                    <span data-en="Capital" data-ar="رأس المال" data-fr="Capital">Capital</span>
+                                </div>
+                                <div class="account-balance balance-credit">$500,000</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('3020')">
+                                <div class="account-info">
+                                    <span class="account-code">3020</span>
+                                    <span data-en="Retained Earnings" data-ar="الأرباح المحتجزة" data-fr="Bénéfices Non Distribués">Retained Earnings</span>
+                                </div>
+                                <div class="account-balance balance-credit">$185,670</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Revenue -->
+                    <div class="account-category">
+                        <div class="category-header" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <h3>
+                                <i class="fas fa-chart-line"></i>
+                                <span data-en="Revenue" data-ar="الإيرادات" data-fr="Revenus">Revenue</span>
+                            </h3>
+                            <strong>$345,890</strong>
+                        </div>
+                        <div class="category-accounts">
+                            <div class="account-item" onclick="viewAccount('4010')">
+                                <div class="account-info">
+                                    <span class="account-code">4010</span>
+                                    <span data-en="Sales Revenue" data-ar="إيرادات المبيعات" data-fr="Revenus Ventes">Sales Revenue</span>
+                                </div>
+                                <div class="account-balance balance-credit">$298,670</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('4020')">
+                                <div class="account-info">
+                                    <span class="account-code">4020</span>
+                                    <span data-en="Service Revenue" data-ar="إيرادات الخدمات" data-fr="Revenus Services">Service Revenue</span>
+                                </div>
+                                <div class="account-balance balance-credit">$47,220</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expenses -->
+                    <div class="account-category">
+                        <div class="category-header" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <h3>
+                                <i class="fas fa-receipt"></i>
+                                <span data-en="Expenses" data-ar="المصروفات" data-fr="Dépenses">Expenses</span>
+                            </h3>
+                            <strong>$198,450</strong>
+                        </div>
+                        <div class="category-accounts">
+                            <div class="account-item" onclick="viewAccount('5010')">
+                                <div class="account-info">
+                                    <span class="account-code">5010</span>
+                                    <span data-en="Cost of Goods Sold" data-ar="تكلفة البضاعة المباعة" data-fr="Coût des Ventes">Cost of Goods Sold</span>
+                                </div>
+                                <div class="account-balance balance-debit">$125,340</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('5020')">
+                                <div class="account-info">
+                                    <span class="account-code">5020</span>
+                                    <span data-en="Salaries Expense" data-ar="مصروف الرواتب" data-fr="Frais Salaires">Salaries Expense</span>
+                                </div>
+                                <div class="account-balance balance-debit">$45,670</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('5030')">
+                                <div class="account-info">
+                                    <span class="account-code">5030</span>
+                                    <span data-en="Rent Expense" data-ar="مصروف الإيجار" data-fr="Loyer">Rent Expense</span>
+                                </div>
+                                <div class="account-balance balance-debit">$12,000</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('5040')">
+                                <div class="account-info">
+                                    <span class="account-code">5040</span>
+                                    <span data-en="Utilities Expense" data-ar="مصروف الخدمات" data-fr="Charges">Utilities Expense</span>
+                                </div>
+                                <div class="account-balance balance-debit">$8,940</div>
+                            </div>
+                            <div class="account-item" onclick="viewAccount('5050')">
+                                <div class="account-info">
+                                    <span class="account-code">5050</span>
+                                    <span data-en="Marketing Expense" data-ar="مصروف التسويق" data-fr="Frais Marketing">Marketing Expense</span>
+                                </div>
+                                <div class="account-balance balance-debit">$6,500</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journal Entries Tab -->
+            <div id="journal" class="tab-content">
+                <div class="action-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search journal entries..." data-en-placeholder="Search journal entries..." data-ar-placeholder="البحث عن القيود..." data-fr-placeholder="Rechercher des écritures...">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="openModal('addJournal')">
+                            <i class="fas fa-plus"></i>
+                            <span data-en="New Journal Entry" data-ar="قيد جديد" data-fr="Nouvelle Écriture">New Journal Entry</span>
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-file-export"></i>
+                            <span data-en="Export" data-ar="تصدير" data-fr="Exporter">Export</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-en="Entry #" data-ar="رقم القيد" data-fr="N° Écriture">Entry #</th>
+                                <th data-en="Date" data-ar="التاريخ" data-fr="Date">Date</th>
+                                <th data-en="Description" data-ar="الوصف" data-fr="Description">Description</th>
+                                <th data-en="Debit" data-ar="مدين" data-fr="Débit">Debit</th>
+                                <th data-en="Credit" data-ar="دائن" data-fr="Crédit">Credit</th>
+                                <th data-en="Status" data-ar="الحالة" data-fr="Statut">Status</th>
+                                <th data-en="Actions" data-ar="الإجراءات" data-fr="Actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>JE-2024-001</strong></td>
+                                <td>2024-01-15</td>
+                                <td>Sales transaction - Invoice #INV-2024-001</td>
+                                <td><strong style="color: var(--success-color);">$12,450</strong></td>
+                                <td><strong style="color: var(--danger-color);">$12,450</strong></td>
+                                <td><span class="status-badge status-posted" data-en="Posted" data-ar="مرحّل" data-fr="Comptabilisé">Posted</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewJournal(1)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon print" onclick="printJournal(1)" title="Print">
+                                            <i class="fas fa-print"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editJournal(1)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>JE-2024-002</strong></td>
+                                <td>2024-01-18</td>
+                                <td>Purchase transaction - Bill #BILL-2024-002</td>
+                                <td><strong style="color: var(--success-color);">$8,320</strong></td>
+                                <td><strong style="color: var(--danger-color);">$8,320</strong></td>
+                                <td><span class="status-badge status-posted" data-en="Posted" data-ar="مرحّل" data-fr="Comptabilisé">Posted</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewJournal(2)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon print" onclick="printJournal(2)" title="Print">
+                                            <i class="fas fa-print"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editJournal(2)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>JE-2024-003</strong></td>
+                                <td>2024-01-20</td>
+                                <td>Salary payment - January 2024</td>
+                                <td><strong style="color: var(--success-color);">$45,670</strong></td>
+                                <td><strong style="color: var(--danger-color);">$45,670</strong></td>
+                                <td><span class="status-badge status-posted" data-en="Posted" data-ar="مرحّل" data-fr="Comptabilisé">Posted</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewJournal(3)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon print" onclick="printJournal(3)" title="Print">
+                                            <i class="fas fa-print"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editJournal(3)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>JE-2024-004</strong></td>
+                                <td>2024-01-25</td>
+                                <td>Rent payment - January 2024</td>
+                                <td><strong style="color: var(--success-color);">$12,000</strong></td>
+                                <td><strong style="color: var(--danger-color);">$12,000</strong></td>
+                                <td><span class="status-badge status-draft" data-en="Draft" data-ar="مسودة" data-fr="Brouillon">Draft</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewJournal(4)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon print" onclick="printJournal(4)" title="Print">
+                                            <i class="fas fa-print"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editJournal(4)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Financial Reports Tab -->
+            <div id="reports" class="tab-content">
+                <div class="action-bar">
+                    <h3 data-en="Select Report" data-ar="اختر التقرير" data-fr="Sélectionner Rapport">Select Report</h3>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="showReport('balance')">
+                            <i class="fas fa-balance-scale"></i>
+                            <span data-en="Balance Sheet" data-ar="الميزانية العمومية" data-fr="Bilan">Balance Sheet</span>
+                        </button>
+                        <button class="btn btn-success" onclick="showReport('income')">
+                            <i class="fas fa-chart-pie"></i>
+                            <span data-en="Income Statement" data-ar="قائمة الدخل" data-fr="Compte de Résultat">Income Statement</span>
+                        </button>
+                        <button class="btn btn-info" onclick="showReport('cashflow')">
+                            <i class
+							="fas fa-exchange-alt"></i>
+                            <span data-en="Cash Flow" data-ar="التدفقات النقدية" data-fr="Flux de Trésorerie">Cash Flow</span>
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-file-pdf"></i>
+                            <span data-en="Export PDF" data-ar="تصدير PDF" data-fr="Exporter PDF">Export PDF</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Balance Sheet Report -->
+                <div id="balanceSheet" class="report-container">
+                    <div class="report-header">
+                        <h2>Zeralda ERP Tools</h2>
+                        <h3 data-en="Balance Sheet" data-ar="الميزانية العمومية" data-fr="Bilan">Balance Sheet</h3>
+                        <p class="report-period" data-en="As of January 31, 2024" data-ar="كما في 31 يناير 2024" data-fr="Au 31 janvier 2024">As of January 31, 2024</p>
+                    </div>
+
+                    <div class="report-section">
+                        <div class="section-title" data-en="ASSETS" data-ar="الأصول" data-fr="ACTIFS">ASSETS</div>
+                        
+                        <div class="report-row">
+                            <span data-en="Cash and Cash Equivalents" data-ar="النقدية وما في حكمها" data-fr="Trésorerie">Cash and Cash Equivalents</span>
+                            <strong>$502,010</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Accounts Receivable" data-ar="الحسابات المدينة" data-fr="Créances Clients">Accounts Receivable</span>
+                            <strong>$125,340</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Inventory" data-ar="المخزون" data-fr="Stock">Inventory</span>
+                            <strong>$215,210</strong>
+                        </div>
+                        <div class="report-row total">
+                            <span data-en="Total Assets" data-ar="إجمالي الأصول" data-fr="Total Actifs">Total Assets</span>
+                            <strong>$842,560</strong>
+                        </div>
+                    </div>
+
+                    <div class="report-section">
+                        <div class="section-title" data-en="LIABILITIES" data-ar="الخصوم" data-fr="PASSIFS">LIABILITIES</div>
+                        
+                        <div class="report-row">
+                            <span data-en="Accounts Payable" data-ar="الحسابات الدائنة" data-fr="Dettes Fournisseurs">Accounts Payable</span>
+                            <strong>$89,340</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Tax Payable" data-ar="الضرائب المستحقة" data-fr="Taxes à Payer">Tax Payable</span>
+                            <strong>$32,550</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Salaries Payable" data-ar="الرواتب المستحقة" data-fr="Salaires à Payer">Salaries Payable</span>
+                            <strong>$35,000</strong>
+                        </div>
+                        <div class="report-row total">
+                            <span data-en="Total Liabilities" data-ar="إجمالي الخصوم" data-fr="Total Passifs">Total Liabilities</span>
+                            <strong>$156,890</strong>
+                        </div>
+                    </div>
+
+                    <div class="report-section">
+                        <div class="section-title" data-en="EQUITY" data-ar="حقوق الملكية" data-fr="CAPITAUX PROPRES">EQUITY</div>
+                        
+                        <div class="report-row">
+                            <span data-en="Capital" data-ar="رأس المال" data-fr="Capital">Capital</span>
+                            <strong>$500,000</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Retained Earnings" data-ar="الأرباح المحتجزة" data-fr="Bénéfices Non Distribués">Retained Earnings</span>
+                            <strong>$185,670</strong>
+                        </div>
+                        <div class="report-row total">
+                            <span data-en="Total Equity" data-ar="إجمالي حقوق الملكية" data-fr="Total Capitaux Propres">Total Equity</span>
+                            <strong>$685,670</strong>
+                        </div>
+                    </div>
+
+                    <div class="report-row grand-total">
+                        <span data-en="Total Liabilities & Equity" data-ar="إجمالي الخصوم وحقوق الملكية" data-fr="Total Passifs & Capitaux">Total Liabilities & Equity</span>
+                        <strong>$842,560</strong>
+                    </div>
+                </div>
+
+                <!-- Income Statement -->
+                <div id="incomeStatement" class="report-container" style="margin-top: 30px;">
+                    <div class="report-header">
+                        <h2>Zeralda ERP Tools</h2>
+                        <h3 data-en="Income Statement" data-ar="قائمة الدخل" data-fr="Compte de Résultat">Income Statement</h3>
+                        <p class="report-period" data-en="For the Month Ended January 31, 2024" data-ar="للشهر المنتهي في 31 يناير 2024" data-fr="Pour le mois terminé le 31 janvier 2024">For the Month Ended January 31, 2024</p>
+                    </div>
+
+                    <div class="report-section">
+                        <div class="section-title" data-en="REVENUE" data-ar="الإيرادات" data-fr="REVENUS">REVENUE</div>
+                        
+                        <div class="report-row">
+                            <span data-en="Sales Revenue" data-ar="إيرادات المبيعات" data-fr="Revenus Ventes">Sales Revenue</span>
+                            <strong>$298,670</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Service Revenue" data-ar="إيرادات الخدم��ت" data-fr="Revenus Services">Service Revenue</span>
+                            <strong>$47,220</strong>
+                        </div>
+                        <div class="report-row total">
+                            <span data-en="Total Revenue" data-ar="إجمالي الإيرادات" data-fr="Total Revenus">Total Revenue</span>
+                            <strong>$345,890</strong>
+                        </div>
+                    </div>
+
+                    <div class="report-section">
+                        <div class="section-title" data-en="EXPENSES" data-ar="المصروفات" data-fr="DÉPENSES">EXPENSES</div>
+                        
+                        <div class="report-row">
+                            <span data-en="Cost of Goods Sold" data-ar="تكلفة البضاعة المباعة" data-fr="Coût des Ventes">Cost of Goods Sold</span>
+                            <strong>$125,340</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Salaries Expense" data-ar="مصروف الرواتب" data-fr="Frais Salaires">Salaries Expense</span>
+                            <strong>$45,670</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Rent Expense" data-ar="مصروف الإيجار" data-fr="Loyer">Rent Expense</span>
+                            <strong>$12,000</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Utilities Expense" data-ar="مصروف الخدمات" data-fr="Charges">Utilities Expense</span>
+                            <strong>$8,940</strong>
+                        </div>
+                        <div class="report-row">
+                            <span data-en="Marketing Expense" data-ar="مصروف التسويق" data-fr="Frais Marketing">Marketing Expense</span>
+                            <strong>$6,500</strong>
+                        </div>
+                        <div class="report-row total">
+                            <span data-en="Total Expenses" data-ar="إجمالي المصروفات" data-fr="Total Dépenses">Total Expenses</span>
+                            <strong>$198,450</strong>
+                        </div>
+                    </div>
+
+                    <div class="report-row grand-total">
+                        <span data-en="Net Profit" data-ar="صافي الربح" data-fr="Bénéfice Net">Net Profit</span>
+                        <strong>$147,440</strong>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <h3 style="margin: 40px 0 20px 0;" data-en="Financial Analysis" data-ar="التحليل المالي" data-fr="Analyse Financière">Financial Analysis</h3>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3 data-en="Revenue vs Expenses" data-ar="الإيرادات مقابل المصروفات" data-fr="Revenus vs Dépenses">Revenue vs Expenses</h3>
+                        <canvas id="revenueExpenseChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 data-en="Financial Position" data-ar="المركز المالي" data-fr="Position Financière">Financial Position</h3>
+                        <canvas id="financialPositionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banks & Cash Tab -->
+            <div id="banks" class="tab-content">
+                <div class="action-bar">
+                    <h3 data-en="Bank Accounts" data-ar="الحسابات البنكية" data-fr="Comptes Bancaires">Bank Accounts</h3>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="openModal('addBank')">
+                            <i class="fas fa-plus"></i>
+                            <span data-en="Add Bank Account" data-ar="إضافة حساب بنكي" data-fr="Ajouter Compte">Add Bank Account</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="openModal('bankTransfer')">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span data-en="Bank Transfer" data-ar="تحويل بنكي" data-fr="Virement">Bank Transfer</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bank-grid">
+                    <div class="bank-card" onclick="viewBankTransactions(1)">
+                        <div class="bank-header">
+                            <div class="bank-logo">🏦</div>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="bank-name">Banque d'Algérie</div>
+                        <div class="bank-number">**** **** **** 1234</div>
+                        <div class="bank-balance-label" data-en="Available Balance" data-ar="الرصيد المتاح" data-fr="Solde Disponible">Available Balance</div>
+                        <div class="bank-balance">$256,340</div>
+                    </div>
+
+                    <div class="bank-card" onclick="viewBankTransactions(2)" style="background: linear-gradient(135deg, #16a34a, #15803d);">
+                        <div class="bank-header">
+                            <div class="bank-logo">🏦</div>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="bank-name">CPA Bank</div>
+                        <div class="bank-number">**** **** **** 5678</div>
+                        <div class="bank-balance-label" data-en="Available Balance" data-ar="الرصيد المتاح" data-fr="Solde Disponible">Available Balance</div>
+                        <div class="bank-balance">$145,670</div>
+                    </div>
+
+                    <div class="bank-card" onclick="viewBankTransactions(3)" style="background: linear-gradient(135deg, #ea580c, #c2410c);">
+                        <div class="bank-header">
+                            <div class="bank-logo">💰</div>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="bank-name">Cash Account</div>
+                        <div class="bank-number">Main Cash Register</div>
+                        <div class="bank-balance-label" data-en="Available Balance" data-ar="الرصيد المتاح" data-fr="Solde Disponible">Available Balance</div>
+                        <div class="bank-balance">$54,770</div>
+                    </div>
+
+                    <div class="bank-card" onclick="viewBankTransactions(4)" style="background: linear-gradient(135deg, #7c3aed, #6d28d9);">
+                        <div class="bank-header">
+                            <div class="bank-logo">🏦</div>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="bank-name">BNA Bank</div>
+                        <div class="bank-number">**** **** **** 9012</div>
+                        <div class="bank-balance-label" data-en="Available Balance" data-ar="الرصيد المتاح" data-fr="Solde Disponible">Available Balance</div>
+                        <div class="bank-balance">$0</div>
+                    </div>
+                </div>
+
+                <h3 style="margin: 40px 0 20px 0;" data-en="Recent Bank Transactions" data-ar="المعاملات البنكية الأخيرة" data-fr="Transactions Bancaires Récentes">Recent Bank Transactions</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-en="Date" data-ar="التاريخ" data-fr="Date">Date</th>
+                                <th data-en="Bank Account" data-ar="الحساب البنكي" data-fr="Compte">Bank Account</th>
+                                <th data-en="Description" data-ar="الوصف" data-fr="Description">Description</th>
+                                <th data-en="Reference" data-ar="المرجع" data-fr="Référence">Reference</th>
+                                <th data-en="Debit" data-ar="مدين" data-fr="Débit">Debit</th>
+                                <th data-en="Credit" data-ar="دائن" data-fr="Crédit">Credit</th>
+                                <th data-en="Balance" data-ar="الرصيد" data-fr="Solde">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-01-28</td>
+                                <td>Banque d'Algérie</td>
+                                <td>Customer payment received</td>
+                                <td>INV-2024-156</td>
+                                <td><strong style="color: var(--success-color);">$12,450</strong></td>
+                                <td>-</td>
+                                <td><strong>$256,340</strong></td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-26</td>
+                                <td>CPA Bank</td>
+                                <td>Supplier payment made</td>
+                                <td>BILL-2024-045</td>
+                                <td>-</td>
+                                <td><strong style="color: var(--danger-color);">$8,320</strong></td>
+                                <td><strong>$145,670</strong></td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-25</td>
+                                <td>Cash Account</td>
+                                <td>Petty cash expenses</td>
+                                <td>PE-2024-015</td>
+                                <td>-</td>
+                                <td><strong style="color: var(--danger-color);">$450</strong></td>
+                                <td><strong>$54,770</strong></td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-23</td>
+                                <td>Banque d'Algérie</td>
+                                <td>Salary payment</td>
+                                <td>PAY-2024-001</td>
+                                <td>-</td>
+                                <td><strong style="color: var(--danger-color);">$45,670</strong></td>
+                                <td><strong>$243,890</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Account Modal -->
+    <div id="addAccount" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-en="Add New Account" data-ar="إضافة حساب جديد" data-fr="Ajouter Nouveau Compte">Add New Account</h2>
+                <div class="close-modal" onclick="closeModal('addAccount')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="accountForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Account Code *" data-ar="رمز الحساب *" data-fr="Code Compte *">Account Code *</label>
+                            <input type="text" required placeholder="e.g., 1050">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Account Name *" data-ar="اسم الحساب *" data-fr="Nom Compte *">Account Name *</label>
+                            <input type="text" required placeholder="Enter account name">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Account Type *" data-ar="نوع الحساب *" data-fr="Type Compte *">Account Type *</label>
+                            <select required>
+                                <option value="">Select Type</option>
+                                <option value="asset">Asset</option>
+                                <option value="liability">Liability</option>
+                                <option value="equity">Equity</option>
+                                <option value="revenue">Revenue</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Parent Account" data-ar="الحساب الرئيسي" data-fr="Compte Parent">Parent Account</label>
+                            <select>
+                                <option value="">None (Main Account)</option>
+                                <option>1000 - Assets</option>
+                                <option>2000 - Liabilities</option>
+                                <option>3000 - Equity</option>
+                                <option>4000 - Revenue</option>
+                                <option>5000 - Expenses</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Currency" data-ar="العملة" data-fr="Devise">Currency</label>
+                            <select>
+                                <option>DZD - Algerian Dinar</option>
+                                <option>USD - US Dollar</option>
+                                <option>EUR - Euro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Opening Balance" data-ar="الرصيد الافتتاحي" data-fr="Solde Ouverture">Opening Balance</label>
+                            <input type="number" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Description" data-ar="الوصف" data-fr="Description">Description</label>
+                        <textarea placeholder="Account description..." rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addAccount')">
+                    <i class="fas fa-times"></i>
+                    <span data-en="Cancel" data-ar="إلغاء" data-fr="Annuler">Cancel</span>
+                </button>
+                <button class="btn btn-success" onclick="saveAccount()">
+                    <i class="fas fa-save"></i>
+                    <span data-en="Save Account" data-ar="حفظ الحساب" data-fr="Enregistrer Compte">Save Account</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Journal Entry Modal -->
+    <div id="addJournal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-en="Create Journal Entry" data-ar="إنشاء قيد محاسبي" data-fr="Créer Écriture Journal">Create Journal Entry</h2>
+                <div class="close-modal" onclick="closeModal('addJournal')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="journalForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Entry Number *" data-ar="رقم القيد *" data-fr="N° Écriture *">Entry Number *</label>
+                            <input type="text" value="JE-2024-005" required readonly style="background: var(--light-color);">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Date *" data-ar="التاريخ *" data-fr="Date *">Date *</label>
+                            <input type="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Reference" data-ar="المرجع" data-fr="Référence">Reference</label>
+                            <input type="text" placeholder="Optional reference">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label data-en="Description *" data-ar="الوصف *" data-fr="Description *">Description *</label>
+                        <textarea required placeholder="Journal entry description..." rows="2"></textarea>
+                    </div>
+
+                    <div class="journal-lines">
+                        <h3 data-en="Journal Lines" data-ar="سطور القيد" data-fr="Lignes Écriture">Journal Lines</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th data-en="Account" data-ar="الحساب" data-fr="Compte">Account</th>
+                                        <th data-en="Description" data-ar="الوصف" data-fr="Description">Description</th>
+                                        <th data-en="Debit" data-ar="مدين" data-fr="Débit">Debit</th>
+                                        <th data-en="Credit" data-ar="دائن" data-fr="Crédit">Credit</th>
+                                        <th data-en="Action" data-ar="إجراء" data-fr="Action">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="journalLinesTable">
+                                    <tr>
+                                        <td>
+                                            <select style="width:100%; padding:8px; border: 2px solid var(--light-color); border-radius: 8px;">
+                                                <option value="">Select Account</option>
+                                                <option>1010 - Cash</option>
+                                                <option>1020 - Bank Account</option>
+                                                <option>1030 - Accounts Receivable</option>
+                                                <option>2010 - Accounts Payable</option>
+                                                <option>4010 - Sales Revenue</option>
+                                                <option>5010 - COGS</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" style="width:100%; padding:8px;" placeholder="Line description"></td>
+                                        <td><input type="number" style="width:100px; padding:8px;" placeholder="0.00" step="0.01" onchange="calculateJournalBalance()"></td>
+                                        <td><input type="number" style="width:100px; padding:8px;" placeholder="0.00" step="0.01" onchange="calculateJournalBalance()"></td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" onclick="removeJournalLine(this)" style="padding: 8px 12px;">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <select style="width:100%; padding:8px; border: 2px solid var(--light-color); border-radius: 8px;">
+                                                <option value="">Select Account</option>
+                                                <option>1010 - Cash</option>
+                                                <option>1020 - Bank Account</option>
+                                                <option>1030 - Accounts Receivable</option>
+                                                <option>2010 - Accounts Payable</option>
+                                                <option>4010 - Sales Revenue</option>
+                                                <option>5010 - COGS</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" style="width:100%; padding:8px;" placeholder="Line description"></td>
+                                        <td><input type="number" style="width:100px; padding:8px;" placeholder="0.00" step="0.01" onchange="calculateJournalBalance()"></td>
+                                        <td><input type="number" style="width:100px; padding:8px;" placeholder="0.00" step="0.01" onchange="calculateJournalBalance()"></td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" onclick="removeJournalLine(this)" style="padding: 8px 12px;">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="addJournalLine()" style="margin-top: 10px;">
+                            <i class="fas fa-plus"></i>
+                            <span data-en="Add Line" data-ar="��ضافة سطر" data-fr="Ajouter Ligne">Add Line</span>
+                        </button>
+
+                        <div class="journal-summary">
+                            <div class="summary-item">
+                                <span class="summary-label" data-en="Total Debit" data-ar="إجمالي المدين" data-fr="Total Débit">Total Debit</span>
+                                <span class="summary-value" id="totalDebit">$0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label" data-en="Total Credit" data-ar="إجمالي الدائن" data-fr="Total Crédit">Total Credit</span>
+                                <span class="summary-value" id="totalCredit">$0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label" data-en="Difference" data-ar="الفرق" data-fr="Différence">Difference</span>
+                                <span class="summary-value balanced" id="difference">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addJournal')">
+                    <i class="fas fa-times"></i>
+                    <span data-en="Cancel" data-ar="إلغاء" data-fr="Annuler">Cancel</span>
+                </button>
+                <button class="btn btn-warning" onclick="saveJournalDraft()">
+                    <i class="fas fa-save"></i>
+                    <span data-en="Save as Draft" data-ar="حفظ كمسودة" data-fr="Enregistrer Brouillon">Save as Draft</span>
+                </button>
+                <button class="btn btn-success" onclick="saveJournal()">
+                    <i class="fas fa-check"></i>
+                    <span data-en="Post Entry" data-ar="ترحيل القيد" data-fr="Comptabiliser">Post Entry</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bank Account Modal -->
+    <div id="addBank" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-en="Add Bank Account" data-ar="إضافة حساب بنكي" data-fr="Ajouter Compte Bancaire">Add Bank Account</h2>
+                <div class="close-modal" onclick="closeModal('addBank')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="bankForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Bank Name *" data-ar="اسم البنك *" data-fr="Nom Banque *">Bank Name *</label>
+                            <input type="text" required placeholder="Enter bank name">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Account Number *" data-ar="رقم الحساب *" data-fr="N° Compte *">Account Number *</label>
+                            <input type="text" required placeholder="Account number">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Account Type" data-ar="نوع الحساب" data-fr="Type Compte">Account Type</label>
+                            <select>
+                                <option>Checking Account</option>
+                                <option>Savings Account</option>
+                                <option>Business Account</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Currency" data-ar="العملة" data-fr="Devise">Currency</label>
+                            <select>
+                                <option>DZD - Algerian Dinar</option>
+                                <option>USD - US Dollar</option>
+                                <option>EUR - Euro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Opening Balance" data-ar="الرصيد الافتتاحي" data-fr="Solde Ouverture">Opening Balance</label>
+                            <input type="number" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Branch" data-ar="الفرع" data-fr="Agence">Branch</label>
+                            <input type="text" placeholder="Branch name/code">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Notes" data-ar="ملاحظات" data-fr="Notes">Notes</label>
+                        <textarea placeholder="Additional notes..." rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addBank')">
+                    <i class="fas fa-times"></i>
+                    <span data-en="Cancel" data-ar="إلغاء" data-fr="Annuler">Cancel</span>
+                </button>
+                <button class="btn btn-success" onclick="saveBank()">
+                    <i class="fas fa-save"></i>
+                    <span data-en="Save Bank Account" data-ar="حفظ الحساب" data-fr="Enregistrer Compte">Save Bank Account</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bank Transfer Modal -->
+    <div id="bankTransfer" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-en="Bank Transfer" data-ar="تحويل بنكي" data-fr="Virement Bancaire">Bank Transfer</h2>
+                <div class="close-modal" onclick="closeModal('bankTransfer')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="transferForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="From Account *" data-ar="من حساب *" data-fr="Du Compte *">From Account *</label>
+                            <select required>
+                                <option value="">Select Account</option>
+                                <option>Banque d'Algérie - $256,340</option>
+                                <option>CPA Bank - $145,670</option>
+                                <option>Cash Account - $54,770</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="To Account *" data-ar="إلى حساب *" data-fr="Au Compte *">To Account *</label>
+                            <select required>
+                                <option value="">Select Account</option>
+                                <option>Banque d'Algérie</option>
+                                <option>CPA Bank</option>
+                                <option>Cash Account</option>
+                                <option>BNA Bank</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Transfer Date *" data-ar="تاريخ التحويل *" data-fr="Date Virement *">Transfer Date *</label>
+                            <input type="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Amount *" data-ar="المبلغ *" data-fr="Montant *">Amount *</label>
+                            <input type="number" required placeholder="0.00" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Reference" data-ar="المرجع" data-fr="Référence">Reference</label>
+                            <input type="text" placeholder="Transfer reference">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Description" data-ar="الوصف" data-fr="Description">Description</label>
+                        <textarea placeholder="Transfer description..." rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('bankTransfer')">
+                    <i class="fas fa-times"></i>
+                    <span data-en="Cancel" data-ar="إلغاء" data-fr="Annuler">Cancel</span>
+                </button>
+                <button class="btn btn-success" onclick="saveTransfer()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span data-en="Transfer" data-ar="تحويل" data-fr="Transférer">Transfer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language Translations
+        const translations = {
+            en: {
+                appTitle: 'Zeralda ERP Tools',
+                currentLang: 'English'
+            },
+            ar: {
+                appTitle: 'أدوات زرالدة لتخطيط موارد المؤسسة',
+                currentLang: 'العربية'
+            },
+            fr: {
+                appTitle: 'Outils ERP Zeralda',
+                currentLang: 'Français'
+            }
+        };
+
+        // Change Language Function
+        function changeLanguage(lang) {
+            const body = document.body;
+            const html = document.documentElement;
+            
+            if (lang === 'ar') {
+                body.classList.add('rtl');
+                html.setAttribute('dir', 'rtl');
+                html.setAttribute('lang', 'ar');
+            } else {
+                body.classList.remove('rtl');
+                html.setAttribute('dir', 'ltr');
+                html.setAttribute('lang', lang);
+            }
+
+            document.querySelectorAll('[data-' + lang + ']').forEach(element => {
+                element.textContent = element.getAttribute('data-' + lang);
+            });
+
+            document.querySelectorAll('[data-' + lang + '-placeholder]').forEach(element => {
+                element.placeholder = element.getAttribute('data-' + lang + '-placeholder');
+            });
+
+            document.getElementById('app-title').textContent = translations[lang].appTitle;
+            document.getElementById('current-lang').textContent = translations[lang].currentLang;
+
+            localStorage.setItem('preferred-language', lang);
+        }
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Switch Tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Account Functions
+        function saveAccount() {
+            alert('Account saved successfully! ✅\n\nThis is a demo. In production, data will be saved to the database.');
+            closeModal('addAccount');
+        }
+
+        function viewAccount(code) {
+            alert('Opening account ' + code + ' details...\n\nThis feature will be fully implemented in production.');
+        }
+
+        // Journal Entry Functions
+        function addJournalLine() {
+            const table = document.getElementById('journalLinesTable');
+            const newRow = table.rows[0].cloneNode(true);
+            
+            newRow.querySelectorAll('input').forEach(input => {
+                input.value = '';
+            });
+            newRow.querySelectorAll('select').forEach(select => {
+                select.selectedIndex = 0;
+            });
+            
+            table.appendChild(newRow);
+        }
+
+        function removeJournalLine(button) {
+            const table = document.getElementById('journalLinesTable');
+            if (table.rows.length > 2) {
+                button.closest('tr').remove();
+                calculateJournalBalance();
+            } else {
+                alert('At least two lines are required!');
+            }
+        }
+
+        function calculateJournalBalance() {
+            let totalDebit = 0;
+            let totalCredit = 0;
+            const table = document.getElementById('journalLinesTable');
+            
+            for (let row of table.rows) {
+                const debit = parseFloat(row.querySelectorAll('input[type="number"]')[0].value) || 0;
+                const credit = parseFloat(row.querySelectorAll('input[type="number"]')[1].value) || 0;
+                totalDebit += debit;
+                totalCredit += credit;
+            }
+            
+            const difference = Math.abs(totalDebit - totalCredit);
+            
+            document.getElementById('totalDebit').textContent = '$' + totalDebit.toFixed(2);
+            document.getElementById('totalCredit').textContent = '$' + totalCredit.toFixed(2);
+            
+            const diffElement = document.getElementById('difference');
+            diffElement.textContent = '$' + difference.toFixed(2);
+            
+            if (difference === 0 && totalDebit > 0) {
+                diffElement.className = 'summary-value balanced';
+            } else {
+                diffElement.className = 'summary-value unbalanced';
+            }
+        }
+
+        function saveJournalDraft() {
+            alert('Journal entry saved as draft! ✅\n\nThis is a demo. In production, data will be saved to the database.');
+            closeModal('addJournal');
+        }
+
+        function saveJournal() {
+            const totalDebit = parseFloat(document.getElementById('totalDebit').textContent.replace('$', ''));
+            const totalCredit = parseFloat(document.getElementById('totalCredit').textContent.replace('$', ''));
+            
+            if (totalDebit !== totalCredit) {
+                alert('⚠️ Warning: Debit and Credit must be equal!\n\nDebit: $' + totalDebit + '\nCredit: $' + totalCredit);
+                return;
+            }
+            
+            if (totalDebit === 0) {
+                alert('⚠️ Please add journal lines with amounts!');
+                return;
+            }
+            
+            alert('Journal entry posted successfully! ✅\n\nThis is a demo. In production, data will be saved to the database.');
+            closeModal('addJournal');
+        }
+
+        function viewJournal(id) {
+            alert('Opening journal entry #' + id + ' details...\n\nThis feature will be fully implemented in production.');
+        }
+
+        function editJournal(id) {
+            alert('Opening journal entry #' + id + ' for editing...\n\nThis feature will be fully implemented in production.');
+            openModal('addJournal');
+        }
+
+        function printJournal(id) {
+            alert('Preparing journal entry #' + id + ' for printing...\n\nThis will open the print dialog in production.');
+        }
+
+        // Report Functions
+        function showReport(type) {
+            alert('Loading ' + type + ' report...\n\nThe report is already displayed below. In production, this will generate a PDF.');
+        }
+
+        // Bank Functions
+        function saveBank() {
+            alert('Bank account saved successfully! ✅\n\nThis is a demo. In production, data will be saved to the database.');
+            closeModal('addBank');
+        }
+
+        function viewBankTransactions(id) {
+            alert('Opening bank account #' + id + ' transactions...\n\nThis feature will be fully implemented in production.');
+        }
+
+        function saveTransfer() {
+            alert('Bank transfer completed successfully! ✅\n\nThis is a demo. In production, the transfer will be recorded in the database.');
+            closeModal('bankTransfer');
+        }
+
+        // Initialize Charts
+        window.onload = function() {
+            const savedLang = localStorage.getItem('preferred-language') || 'en';
+            changeLanguage(savedLang);
+
+            // Revenue vs Expenses Chart
+            const revenueExpenseCtx = document.getElementById('revenueExpenseChart');
+            if (revenueExpenseCtx) {
+                new Chart(revenueExpenseCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [
+                            {
+                                label: 'Revenue',
+                                data: [280000, 295000, 310000, 305000, 320000, 335000, 328000, 340000, 338000, 345890, 350000, 360000],
+                                backgroundColor: '#10b981',
+                                borderRadius: 8
+                            },
+                            {
+                                label: 'Expenses',
+                                data: [185000, 192000, 188000, 195000, 190000, 200000, 195000, 198450, 202000, 205000, 208000, 210000],
+                                backgroundColor: '#f59e0b',
+                                borderRadius: 8
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Financial Position Chart
+            const financialPositionCtx = document.getElementById('financialPositionChart');
+            if (financialPositionCtx) {
+                new Chart(financialPositionCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Assets', 'Liabilities', 'Equity'],
+                        datasets: [{
+                            data: [842560, 156890, 685670],
+                            backgroundColor: [
+                                '#2563eb',
+                                '#ef4444',
+                                '#8b5cf6'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                if (!input.value) {
+                    input.value = today;
+                }
+            });
+        };
+    </script>
+</body>
+</html>

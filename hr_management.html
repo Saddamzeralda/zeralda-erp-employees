@@ -1,0 +1,2505 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Resources - Zeralda ERP Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
+            --purple-color: #8b5cf6;
+            --dark-color: #1f2937;
+            --light-color: #f3f4f6;
+            --white-color: #ffffff;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        body.rtl {
+            direction: rtl;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-image {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .language-selector {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .language-selector:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: var(--white-color);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        body.rtl .sidebar {
+            left: auto;
+            right: 0;
+        }
+
+        .menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        body.rtl .menu-item {
+            border-left: none;
+            border-right: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: var(--light-color);
+            border-left-color: var(--primary-color);
+        }
+
+        body.rtl .menu-item:hover {
+            border-right-color: var(--primary-color);
+        }
+
+        .menu-item.active {
+            background: var(--light-color);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        body.rtl .menu-item.active {
+            border-right-color: var(--primary-color);
+        }
+
+        .menu-item i {
+            width: 25px;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        body.rtl .main-content {
+            margin-left: 0;
+            margin-right: var(--sidebar-width);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-icon.blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .stat-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .stat-icon.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .stat-icon.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+        .stat-details h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-details p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--light-color);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 18px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background: var(--light-color);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Action Buttons */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light-color);
+            padding: 10px 20px;
+            border-radius: 25px;
+            gap: 10px;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--info-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Employee Card */
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .employee-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .employee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .employee-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .employee-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .employee-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .employee-info p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .employee-details {
+            padding-top: 15px;
+            border-top: 1px solid var(--light-color);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            color: #6b7280;
+        }
+
+        .detail-value {
+            font-weight: 600;
+        }
+
+        .employee-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--light-color);
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-color);
+            white-space: nowrap;
+        }
+
+        body.rtl th {
+            text-align: right;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--light-color);
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-active { background: #d1fae5; color: #065f46; }
+        .status-present { background: #d1fae5; color: #065f46; }
+        .status-absent { background: #fee2e2; color: #991b1b; }
+        .status-late { background: #fef3c7; color: #92400e; }
+        .status-approved { background: #dbeafe; color: #1e40af; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-rejected { background: #fee2e2; color: #991b1b; }
+        .status-inactive { background: #e5e7eb; color: #374151; }
+
+        .action-icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-icon.edit {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .action-icon.delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-icon.view {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .action-icon:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--light-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 2px solid var(--light-color);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 2px solid var(--light-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Attendance Calendar */
+        .calendar-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header h3 {
+            font-size: 20px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 10px;
+        }
+
+        .calendar-day:hover {
+            transform: scale(1.05);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .calendar-day.present {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .calendar-day.absent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .calendar-day.leave {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .calendar-day.weekend {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .day-number {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .day-status {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Payroll Summary */
+        .payroll-summary {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-item {
+            padding: 20px;
+            background: var(--light-color);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .summary-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        /* Language Dropdown */
+        .language-dropdown {
+            position: relative;
+        }
+
+        .language-options {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            margin-top: 10px;
+            overflow: hidden;
+            display: none;
+            z-index: 1001;
+        }
+
+        .language-dropdown:hover .language-options {
+            display: block;
+        }
+
+        .language-option {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark-color);
+        }
+
+        .language-option:hover {
+            background: var(--light-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            body.rtl .sidebar {
+                transform: translateX(100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            body.rtl .main-content {
+                margin-right: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .employee-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-grid {
+                grid-template-columns: repeat(7, 1fr);
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <i class="fas fa-bars mobile-menu-btn" onclick="toggleSidebar()"></i>
+            <div class="logo">
+                <img src="logo.png" alt="Company Logo" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <i class="fas fa-building" style="display:none;"></i>
+                <span id="app-title">Zeralda ERP Tools</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="language-dropdown">
+                <div class="language-selector">
+                    <i class="fas fa-globe"></i>
+                    <span id="current-lang">English</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="language-options">
+                    <div class="language-option" onclick="changeLanguage('en')">
+                        <i class="fas fa-flag-usa"></i>
+                        <span>English</span>
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('ar')">
+                        <i class="fas fa-flag"></i>
+                        <span>العربية</span>
+                    </div>
+                    <div class="language-option" onclick="changeLanguage('fr')">
+                        <i class="fas fa-flag"></i>
+                        <span>Français</span>
+                    </div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">KZ</div>
+                <div>
+                    <div style="font-weight: 600;">Karim Zitouni</div>
+                    <div style="font-size: 12px; opacity: 0.9;">Administrator</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="menu">
+            <a class="menu-item" href="zeralda_erp_dashboard.html">
+                <i class="fas fa-home"></i>
+                <span class="menu-text" data-en="Dashboard" data-ar="لوحة التحكم" data-fr="Tableau de bord">Dashboard</span>
+            </a>
+            <a class="menu-item" href="sales_management.html">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="menu-text" data-en="Sales Management" data-ar="إدارة المبيعات" data-fr="Gestion des ventes">Sales Management</span>
+            </a>
+            <a class="menu-item" href="purchasing_management.html">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="menu-text" data-en="Purchasing" data-ar="المشتريات" data-fr="Achats">Purchasing</span>
+            </a>
+            <a class="menu-item" href="inventory_management.html">
+                <i class="fas fa-boxes"></i>
+                <span class="menu-text" data-en="Inventory" data-ar="المخزون" data-fr="Inventaire">Inventory</span>
+            </a>
+            <a class="menu-item" href="finance_accounting.html">
+                <i class="fas fa-dollar-sign"></i>
+                <span class="menu-text" data-en="Finance & Accounting" data-ar="المالية والحسابات" data-fr="Finance et Comptabilité">Finance & Accounting</span>
+            </a>
+            <a class="menu-item active">
+                <i class="fas fa-users"></i>
+                <span class="menu-text" data-en="Human Resources" data-ar="الموارد البشرية" data-fr="Ressources Humaines">Human Resources</span>
+            </a>
+            <a class="menu-item" onclick="alert('Module coming soon!')">
+                <i class="fas fa-user-friends"></i>
+                <span class="menu-text" data-en="Customer Relations" data-ar="علاقات العملاء" data-fr="Relations Clients">Customer Relations</span>
+            </a>
+            <a class="menu-item" onclick="alert('Module coming soon!')">
+                <i class="fas fa-chart-line"></i>
+                <span class="menu-text" data-en="Reports & Analytics" data-ar="التقارير والتحليلات" data-fr="Rapports et Analyses">Reports & Analytics</span>
+            </a>
+            <a class="menu-item" onclick="alert('Module coming soon!')">
+                <i class="fas fa-cog"></i>
+                <span class="menu-text" data-en="Settings" data-ar="الإعدادات" data-fr="Paramètres">Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" data-en="Human Resources Management" data-ar="إدارة الموارد البشرية" data-fr="Gestion Ressources Humaines">Human Resources Management</h1>
+                <div class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span data-en="Home" data-ar="الرئيسية" data-fr="Accueil">Home</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span data-en="HR" data-ar="الموارد البشرية" data-fr="RH">HR</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>48</h3>
+                    <p data-en="Total Employees" data-ar="إجمالي الموظفين" data-fr="Total Employés">Total Employees</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>45</h3>
+                    <p data-en="Present Today" data-ar="الحضور اليوم" data-fr="Présents Aujourd'hui">Present Today</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <i class="fas fa-user-clock"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>2</h3>
+                    <p data-en="On Leave" data-ar="في إجازة" data-fr="En Congé">On Leave</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red">
+                    <i class="fas fa-user-times"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>1</h3>
+                    <p data-en="Absent" data-ar="غائب" data-fr="Absent">Absent</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>$145,670</h3>
+                    <p data-en="Monthly Payroll" data-ar="الرواتب الشهرية" data-fr="Masse Salariale">Monthly Payroll</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon cyan">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>3</h3>
+                    <p data-en="New Hires This Month" data-ar="موظفين جدد هذا الشهر" data-fr="Nouvelles Recrues">New Hires This Month</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('employees')">
+                    <i class="fas fa-users"></i>
+                    <span data-en="Employees" data-ar="الموظفين" data-fr="Employés">Employees</span>
+                </div>
+                <div class="tab" onclick="switchTab('attendance')">
+                    <i class="fas fa-calendar-check"></i>
+                    <span data-en="Attendance" data-ar="الحضور والانصراف" data-fr="Présence">Attendance</span>
+                </div>
+                <div class="tab" onclick="switchTab('leave')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span data-en="Leave Management" data-ar="إدارة الإجازات" data-fr="Gestion Congés">Leave Management</span>
+                </div>
+                <div class="tab" onclick="switchTab('payroll')">
+                    <i class="fas fa-money-check-alt"></i>
+                    <span data-en="Payroll" data-ar="الرواتب" data-fr="Paie">Payroll</span>
+                </div>
+            </div>
+
+            <!-- Employees Tab -->
+            <div id="employees" class="tab-content active">
+                <div class="action-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search employees..." data-en-placeholder="Search employees..." data-ar-placeholder="البحث عن الموظفين..." data-fr-placeholder="Rechercher des employés...">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="openModal('addEmployee')">
+                            <i class="fas fa-plus"></i>
+                            <span data-en="Add Employee" data-ar="إضافة موظف" data-fr="Ajouter Employé">Add Employee</span>
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-file-export"></i>
+                            <span data-en="Export" data-ar="تصدير" data-fr="Exporter">Export</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="employee-grid">
+                    <div class="employee-card" onclick="viewEmployee(1)">
+                        <div class="employee-header">
+                            <div class="employee-avatar" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">AB</div>
+                            <div class="employee-info">
+                                <h3>Ahmed Benali</h3>
+                                <p>Software Engineer</p>
+                            </div>
+                        </div>
+                        <div class="employee-details">
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Employee ID" data-ar="رقم الموظف" data-fr="ID Employé">Employee ID</span>
+                                <span class="detail-value">EMP-001</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Department" data-ar="القسم" data-fr="Département">Department</span>
+                                <span class="detail-value">IT</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Salary" data-ar="الراتب" data-fr="Salaire">Salary</span>
+                                <span class="detail-value">$3,200/month</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Status" data-ar="الحالة" data-fr="Statut">Status</span>
+                                <span class="status-badge status-active" data-en="Active" data-ar="نشط" data-fr="Actif">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="employee-card" onclick="viewEmployee(2)">
+                        <div class="employee-header">
+                            <div class="employee-avatar" style="background: linear-gradient(135deg, #10b981, #059669);">FZ</div>
+                            <div class="employee-info">
+                                <h3>Fatima Zahra</h3>
+                                <p>HR Manager</p>
+                            </div>
+                        </div>
+                        <div class="employee-details">
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Employee ID" data-ar="رقم الموظف" data-fr="ID Employé">Employee ID</span>
+                                <span class="detail-value">EMP-002</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Department" data-ar="القسم" data-fr="Département">Department</span>
+                                <span class="detail-value">Human Resources</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Salary" data-ar="الراتب" data-fr="Salaire">Salary</span>
+                                <span class="detail-value">$3,500/month</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Status" data-ar="الحالة" data-fr="Statut">Status</span>
+                                <span class="status-badge status-active" data-en="Active" data-ar="نشط" data-fr="Actif">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="employee-card" onclick="viewEmployee(3)">
+                        <div class="employee-header">
+                            <div class="employee-avatar" style="background: linear-gradient(135deg, #f59e0b, #d97706);">MA</div>
+                            <div class="employee-info">
+                                <h3>Mohamed Amine</h3>
+                                <p>Sales Manager</p>
+                            </div>
+                        </div>
+                        <div class="employee-details">
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Employee ID" data-ar="رقم الموظف" data-fr="ID Employé">Employee ID</span>
+                                <span class="detail-value">EMP-003</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Department" data-ar="القسم" data-fr="Département">Department</span>
+                                <span class="detail-value">Sales</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Salary" data-ar="الراتب" data-fr="Salaire">Salary</span>
+                                <span class="detail-value">$3,800/month</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Status" data-ar="الحالة" data-fr="Statut">Status</span>
+                                <span class="status-badge status-active" data-en="Active" data-ar="نشط" data-fr="Actif">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="employee-card" onclick="viewEmployee(4)">
+                        <div class="employee-header">
+                            <div class="employee-avatar" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">SM</div>
+                            <div class="employee-info">
+                                <h3>Sarah Mansouri</h3>
+                                <p>Accountant</p>
+                            </div>
+                        </div>
+                        <div class="employee-details">
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Employee ID" data-ar="رقم الموظف" data-fr="ID Employé">Employee ID</span>
+                                <span class="detail-value">EMP-004</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Department" data-ar="القسم" data-fr="Département">Department</span>
+                                <span class="detail-value">Finance</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Salary" data-ar="الراتب" data-fr="Salaire">Salary</span>
+                                <span class="detail-value">$2,900/month</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Status" data-ar="الحالة" data-fr="Statut">Status</span>
+                                <span class="status-badge status-active" data-en="Active" data-ar="نشط" data-fr="Actif">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="employee-card" onclick="viewEmployee(5)">
+                        <div class="employee-header">
+                            <div class="employee-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626);">KM</div>
+                            <div class="employee-info">
+                                <h3>Karim Messaoud</h3>
+                                <p>Marketing Specialist</p>
+                            </div>
+                        </div>
+                        <div class="employee-details">
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Employee ID" data-ar="رقم الموظف" data-fr="ID Employé">Employee ID</span>
+                                <span class="detail-value">EMP-005</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Department" data-ar="القسم" data-fr="Département">Department</span>
+                                <span class="detail-value">Marketing</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Salary" data-ar="الراتب" data-fr="Salaire">Salary</span>
+                                <span class="detail-value">$2,700/month</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Status" data-ar="الحالة" data-fr="Statut">Status</span>
+                                <span class="status-badge status-active" data-en="Active" data-ar="نشط" data-fr="Actif">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="employee-card" onclick="viewEmployee(6)">
+                        <div class="employee-header">
+                            <div class="employee-avatar" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">LB</div>
+                            <div class="employee-info">
+                                <h3>Leila Benkhaled</h3>
+                                <p>Customer Support</p>
+                            </div>
+                        </div>
+                        <div class="employee-details">
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Employee ID" data-ar="رقم الموظف" data-fr="ID Employé">Employee ID</span>
+                                <span class="detail-value">EMP-006</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Department" data-ar="القسم" data-fr="Département">Department</span>
+                                <span class="detail-value">Support</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Salary" data-ar="الراتب" data-fr="Salaire">Salary</span>
+                                <span class="detail-value">$2,400/month</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label" data-en="Status" data-ar="الحالة" data-fr="Statut">Status</span>
+                                <span class="status-badge status-active" data-en="Active" data-ar="نشط" data-fr="Actif">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Tab -->
+            <div id="attendance" class="tab-content">
+                <div class="action-bar">
+                    <h3 data-en="Attendance Calendar - January 2024" data-ar="تقويم الحضور - يناير 2024" data-fr="Calendrier Présence - Janvier 2024">Attendance Calendar - January 2024</h3>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="openModal('markAttendance')">
+                            <i class="fas fa-user-check"></i>
+                            <span data-en="Mark Attendance" data-ar="تسجيل الحضور" data-fr="Marquer Présence">Mark Attendance</span>
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-file-export"></i>
+                            <span data-en="Export" data-ar="تصدير" data-fr="Exporter">Export</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <h3>January 2024</h3>
+                        <div class="calendar-nav">
+                            <button class="btn btn-secondary" style="padding: 8px 15px;"><i class="fas fa-chevron-left"></i></button>
+                            <button class="btn btn-secondary" style="padding: 8px 15px;"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid">
+                        <!-- Week Days -->
+                        <div style="text-align: center; font-weight: 700; padding: 10px;">Sun</div>
+                        <div style="text-align: center; font-weight: 700; padding: 10px;">Mon</div>
+                        <div style="text-align: center; font-weight: 700; padding: 10px;">Tue</div>
+                        <div style="text-align: center; font-weight: 700; padding: 10px;">Wed</div>
+                        <div style="text-align: center; font-weight: 700; padding: 10px;">Thu</div>
+                        <div style="text-align: center; font-weight: 700; padding: 10px;">Fri</div>
+                        <div style="text-align: center; font-weight: 700; padding: 10px;">Sat</div>
+
+                        <!-- Days -->
+                        <div class="calendar-day present">
+                            <div class="day-number">1</div>
+                            <div class="day-status">45/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">2</div>
+                            <div class="day-status">46/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">3</div>
+                            <div class="day-status">47/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">4</div>
+                            <div class="day-status">45/48</div>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <div class="day-number">5</div>
+                            <div class="day-status">Weekend</div>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <div class="day-number">6</div>
+                            <div class="day-status">Weekend</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">7</div>
+                            <div class="day-status">48/48</div>
+                        </div>
+
+                        <div class="calendar-day present">
+                            <div class="day-number">8</div>
+                            <div class="day-status">46/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">9</div>
+                            <div class="day-status">47/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">10</div>
+                            <div class="day-status">45/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">11</div>
+                            <div class="day-status">46/48</div>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <div class="day-number">12</div>
+                            <div class="day-status">Weekend</div>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <div class="day-number">13</div>
+                            <div class="day-status">Weekend</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">14</div>
+                            <div class="day-status">47/48</div>
+                        </div>
+
+                        <div class="calendar-day present">
+                            <div class="day-number">15</div>
+                            <div class="day-status">48/48</div>
+                        </div>
+                        <div class="calendar-day leave">
+                            <div class="day-number">16</div>
+                            <div class="day-status">2 Leave</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">17</div>
+                            <div class="day-status">45/48</div>
+                        </div>
+                        <div class="calendar-day absent">
+                            <div class="day-number">18</div>
+                            <div class="day-status">1 Absent</div>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <div class="day-number">19</div>
+                            <div class="day-status">Weekend</div>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <div class="day-number">20</div>
+                            <div class="day-status">Weekend</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">21</div>
+                            <div class="day-status">46/48</div>
+                        </div>
+
+                        <div class="calendar-day present">
+                            <div class="day-number">22</div>
+                            <div class="day-status">47/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">23</div>
+                            <div class="day-status">45/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">24</div>
+                            <div class="day-status">46/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">25</div>
+                            <div class="day-status">48/48</div>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <div class="day-number">26</div>
+                            <div class="day-status">Weekend</div>
+                        </div>
+                        <div class="calendar-day weekend">
+                            <div class="day-number">27</div>
+                            <div class="day-status">Weekend</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">28</div>
+                            <div class="day-status">45/48</div>
+                        </div>
+
+                        <div class="calendar-day present">
+                            <div class="day-number">29</div>
+                            <div class="day-status">47/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">30</div>
+                            <div class="day-status">46/48</div>
+                        </div>
+                        <div class="calendar-day present">
+                            <div class="day-number">31</div>
+                            <div class="day-status">45/48</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 20px 0;" data-en="Today's Attendance" data-ar="حضور اليوم" data-fr="Présence Aujourd'hui">Today's Attendance</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-en="Employee" data-ar="الموظف" data-fr="Employé">Employee</th>
+                                <th data-en="Department" data-ar="القسم" data-fr="Département">Department</th>
+                                <th data-en="Check In" data-ar="الدخول" data-fr="Arrivée">Check In</th>
+                                <th data-en="Check Out" data-ar="الخروج" data-fr="Départ">Check Out</th>
+                                <th data-en="Working Hours" data-ar="ساعات العمل" data-fr="Heures">Working Hours</th>
+                                <th data-en="Status" data-ar="الحالة" data-fr="Statut">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Ahmed Benali</strong></td>
+                                <td>IT</td>
+                                <td>08:00 AM</td>
+                                <td>05:00 PM</td>
+                                <td><strong>9h 00m</strong></td>
+                                <td><span class="status-badge status-present" data-en="Present" data-ar="حاضر" data-fr="Présent">Present</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fatima Zahra</strong></td>
+                                <td>HR</td>
+                                <td>08:15 AM</td>
+                                <td>05:15 PM</td>
+                                <td><strong>9h 00m</strong></td>
+                                <td><span class="status-badge status-late" data-en="Late" data-ar="متأخر" data-fr="Retard">Late</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mohamed Amine</strong></td>
+                                <td>Sales</td>
+                                <td>07:45 AM</td>
+                                <td>-</td>
+                                <td><strong>In Progress</strong></td>
+                                <td><span class="status-badge status-present" data-en="Present" data-ar="حاضر" data-fr="Présent">Present</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sarah Mansouri</strong></td>
+                                <td>Finance</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td><strong>-</strong></td>
+                                <td><span class="status-badge status-absent" data-en="Absent" data-ar="غائب" data-fr="Absent">Absent</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Karim Messaoud</strong></td>
+                                <td>Marketing</td>
+                                <td>08:00 AM</td>
+                                <td>05:10 PM</td>
+                                <td><strong>9h 10m</strong></td>
+                                <td><span class="status-badge status-present" data-en="Present" data-ar="حاضر" data-fr="Présent">Present</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Leave Management Tab -->
+            <div id="leave" class="tab-content">
+                <div class="action-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search leave requests..." data-en-placeholder="Search leave requests..." data-ar-placeholder="البحث ع
+						ن طلبات الإجازة..." data-fr-placeholder="Rechercher des demandes...">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="openModal('addLeave')">
+                            <i class="fas fa-plus"></i>
+                            <span data-en="New Leave Request" data-ar="طلب إجازة جديد" data-fr="Nouvelle Demande">New Leave Request</span>
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-file-export"></i>
+                            <span data-en="Export" data-ar="تصدير" data-fr="Exporter">Export</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-en="Employee" data-ar="الموظف" data-fr="Employé">Employee</th>
+                                <th data-en="Leave Type" data-ar="نوع الإجازة" data-fr="Type Congé">Leave Type</th>
+                                <th data-en="Start Date" data-ar="تاريخ البداية" data-fr="Date Début">Start Date</th>
+                                <th data-en="End Date" data-ar="تاريخ النهاية" data-fr="Date Fin">End Date</th>
+                                <th data-en="Days" data-ar="الأيام" data-fr="Jours">Days</th>
+                                <th data-en="Reason" data-ar="السبب" data-fr="Raison">Reason</th>
+                                <th data-en="Status" data-ar="الحالة" data-fr="Statut">Status</th>
+                                <th data-en="Actions" data-ar="الإجراءات" data-fr="Actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Ahmed Benali</strong></td>
+                                <td>Annual Leave</td>
+                                <td>2024-02-10</td>
+                                <td>2024-02-15</td>
+                                <td><strong>5</strong> days</td>
+                                <td>Family vacation</td>
+                                <td><span class="status-badge status-approved" data-en="Approved" data-ar="موافق عليه" data-fr="Approuvé">Approved</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewLeave(1)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editLeave(1)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fatima Zahra</strong></td>
+                                <td>Sick Leave</td>
+                                <td>2024-01-28</td>
+                                <td>2024-01-30</td>
+                                <td><strong>3</strong> days</td>
+                                <td>Medical treatment</td>
+                                <td><span class="status-badge status-approved" data-en="Approved" data-ar="موافق عليه" data-fr="Approuvé">Approved</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewLeave(2)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editLeave(2)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mohamed Amine</strong></td>
+                                <td>Annual Leave</td>
+                                <td>2024-03-01</td>
+                                <td>2024-03-07</td>
+                                <td><strong>7</strong> days</td>
+                                <td>Personal matters</td>
+                                <td><span class="status-badge status-pending" data-en="Pending" data-ar="معلق" data-fr="En Attente">Pending</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewLeave(3)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editLeave(3)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete" onclick="deleteLeave(3)" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Karim Messaoud</strong></td>
+                                <td>Emergency Leave</td>
+                                <td>2024-01-25</td>
+                                <td>2024-01-25</td>
+                                <td><strong>1</strong> day</td>
+                                <td>Family emergency</td>
+                                <td><span class="status-badge status-rejected" data-en="Rejected" data-ar="مرفوض" data-fr="Rejeté">Rejected</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewLeave(4)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Leila Benkhaled</strong></td>
+                                <td>Maternity Leave</td>
+                                <td>2024-04-01</td>
+                                <td>2024-06-30</td>
+                                <td><strong>90</strong> days</td>
+                                <td>Maternity</td>
+                                <td><span class="status-badge status-pending" data-en="Pending" data-ar="معلق" data-fr="En Attente">Pending</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewLeave(5)" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editLeave(5)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="action-icon delete" onclick="deleteLeave(5)" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="margin: 40px 0 20px 0;" data-en="Leave Balance by Employee" data-ar="رصيد الإجازات للموظفين" data-fr="Solde Congés par Employé">Leave Balance by Employee</h3>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3 data-en="Leave Types Distribution" data-ar="توزيع أنواع الإجازات" data-fr="Distribution Types Congés">Leave Types Distribution</h3>
+                        <canvas id="leaveTypesChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 data-en="Monthly Leave Trend" data-ar="اتجاه الإجازات الشهرية" data-fr="Tendance Congés Mensuels">Monthly Leave Trend</h3>
+                        <canvas id="leaveTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payroll Tab -->
+            <div id="payroll" class="tab-content">
+                <div class="action-bar">
+                    <h3 data-en="Payroll - January 2024" data-ar="الرواتب - يناير 2024" data-fr="Paie - Janvier 2024">Payroll - January 2024</h3>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="openModal('processPayroll')">
+                            <i class="fas fa-play"></i>
+                            <span data-en="Process Payroll" data-ar="معالجة الرواتب" data-fr="Traiter Paie">Process Payroll</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="openModal('addBonus')">
+                            <i class="fas fa-gift"></i>
+                            <span data-en="Add Bonus" data-ar="إضافة مكافأة" data-fr="Ajouter Prime">Add Bonus</span>
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-file-export"></i>
+                            <span data-en="Export" data-ar="تصدير" data-fr="Exporter">Export</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="payroll-summary">
+                    <h3 data-en="Payroll Summary" data-ar="ملخص الرواتب" data-fr="Résumé Paie">Payroll Summary</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="summary-label" data-en="Gross Salary" data-ar="الراتب الإجمالي" data-fr="Salaire Brut">Gross Salary</div>
+                            <div class="summary-value">$165,200</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label" data-en="Deductions" data-ar="الخصومات" data-fr="Déductions">Deductions</div>
+                            <div class="summary-value" style="color: var(--danger-color);">-$19,530</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label" data-en="Net Salary" data-ar="الراتب الصافي" data-fr="Salaire Net">Net Salary</div>
+                            <div class="summary-value" style="color: var(--success-color);">$145,670</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label" data-en="Bonuses" data-ar="المكافآت" data-fr="Primes">Bonuses</div>
+                            <div class="summary-value" style="color: var(--primary-color);">$8,500</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-en="Employee" data-ar="الموظف" data-fr="Employé">Employee</th>
+                                <th data-en="Base Salary" data-ar="الراتب الأساسي" data-fr="Salaire Base">Base Salary</th>
+                                <th data-en="Allowances" data-ar="البدلات" data-fr="Allocations">Allowances</th>
+                                <th data-en="Bonuses" data-ar="المكافآت" data-fr="Primes">Bonuses</th>
+                                <th data-en="Deductions" data-ar="الخصومات" data-fr="Déductions">Deductions</th>
+                                <th data-en="Net Salary" data-ar="الراتب الصافي" data-fr="Salaire Net">Net Salary</th>
+                                <th data-en="Status" data-ar="الحالة" data-fr="Statut">Status</th>
+                                <th data-en="Actions" data-ar="الإجراءات" data-fr="Actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Ahmed Benali</strong></td>
+                                <td>$3,200</td>
+                                <td>$300</td>
+                                <td>$500</td>
+                                <td><span style="color: var(--danger-color);">-$450</span></td>
+                                <td><strong>$3,550</strong></td>
+                                <td><span class="status-badge status-approved" data-en="Processed" data-ar="معالج" data-fr="Traité">Processed</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewPayslip(1)" title="View Payslip">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editPayroll(1)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fatima Zahra</strong></td>
+                                <td>$3,500</td>
+                                <td>$350</td>
+                                <td>$600</td>
+                                <td><span style="color: var(--danger-color);">-$500</span></td>
+                                <td><strong>$3,950</strong></td>
+                                <td><span class="status-badge status-approved" data-en="Processed" data-ar="معالج" data-fr="Traité">Processed</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewPayslip(2)" title="View Payslip">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editPayroll(2)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mohamed Amine</strong></td>
+                                <td>$3,800</td>
+                                <td>$400</td>
+                                <td>$800</td>
+                                <td><span style="color: var(--danger-color);">-$550</span></td>
+                                <td><strong>$4,450</strong></td>
+                                <td><span class="status-badge status-approved" data-en="Processed" data-ar="معالج" data-fr="Traité">Processed</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewPayslip(3)" title="View Payslip">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editPayroll(3)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sarah Mansouri</strong></td>
+                                <td>$2,900</td>
+                                <td>$250</td>
+                                <td>$400</td>
+                                <td><span style="color: var(--danger-color);">-$380</span></td>
+                                <td><strong>$3,170</strong></td>
+                                <td><span class="status-badge status-pending" data-en="Pending" data-ar="معلق" data-fr="En Attente">Pending</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewPayslip(4)" title="View Payslip">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editPayroll(4)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Karim Messaoud</strong></td>
+                                <td>$2,700</td>
+                                <td>$200</td>
+                                <td>$300</td>
+                                <td><span style="color: var(--danger-color);">-$350</span></td>
+                                <td><strong>$2,850</strong></td>
+                                <td><span class="status-badge status-pending" data-en="Pending" data-ar="معلق" data-fr="En Attente">Pending</span></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon view" onclick="viewPayslip(5)" title="View Payslip">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </div>
+                                        <div class="action-icon edit" onclick="editPayroll(5)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="margin: 40px 0 20px 0;" data-en="Payroll Analytics" data-ar="تحليلات الرواتب" data-fr="Analyses Paie">Payroll Analytics</h3>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3 data-en="Department-wise Payroll" data-ar="الرواتب حسب القسم" data-fr="Paie par Département">Department-wise Payroll</h3>
+                        <canvas id="departmentPayrollChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 data-en="Salary Components Breakdown" data-ar="تفصيل مكونات الراتب" data-fr="Détail Composants Salaire">Salary Components Breakdown</h3>
+                        <canvas id="salaryComponentsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div id="addEmployee" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-en="Add New Employee" data-ar="إضافة موظف جديد" data-fr="Ajouter Nouvel Employé">Add New Employee</h2>
+                <div class="close-modal" onclick="closeModal('addEmployee')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="employeeForm">
+                    <h3 style="margin-bottom: 15px;" data-en="Personal Information" data-ar="المعلومات الشخصية" data-fr="Informations Personnelles">Personal Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Employee ID *" data-ar="رقم الموظف *" data-fr="ID Employé *">Employee ID *</label>
+                            <input type="text" value="EMP-007" required readonly style="background: var(--light-color);">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Full Name *" data-ar="الاسم الكامل *" data-fr="Nom Complet *">Full Name *</label>
+                            <input type="text" required placeholder="Enter full name">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Email *" data-ar="البريد الإلكتروني *" data-fr="Email *">Email *</label>
+                            <input type="email" required placeholder="employee@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Phone *" data-ar="الهاتف *" data-fr="Téléphone *">Phone *</label>
+                            <input type="tel" required placeholder="0555123456">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Date of Birth" data-ar="تاريخ الميلاد" data-fr="Date Naissance">Date of Birth</label>
+                            <input type="date">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Gender" data-ar="الجنس" data-fr="Sexe">Gender</label>
+                            <select>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="National ID" data-ar="رقم الهوية" data-fr="N° Identité">National ID</label>
+                            <input type="text" placeholder="National ID number">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Marital Status" data-ar="الحالة الاجتماعية" data-fr="État Civil">Marital Status</label>
+                            <select>
+                                <option value="single">Single</option>
+                                <option value="married">Married</option>
+                                <option value="divorced">Divorced</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 25px 0 15px 0;" data-en="Employment Details" data-ar="تفاصيل التوظيف" data-fr="Détails Emploi">Employment Details</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Join Date *" data-ar="تاريخ التعيين *" data-fr="Date Embauche *">Join Date *</label>
+                            <input type="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Job Title *" data-ar="المسمى الوظيفي *" data-fr="Poste *">Job Title *</label>
+                            <input type="text" required placeholder="e.g., Software Engineer">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Department *" data-ar="القسم *" data-fr="Département *">Department *</label>
+                            <select required>
+                                <option value="">Select Department</option>
+                                <option>IT</option>
+                                <option>Human Resources</option>
+                                <option>Sales</option>
+                                <option>Finance</option>
+                                <option>Marketing</option>
+                                <option>Support</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Employment Type" data-ar="نوع التوظيف" data-fr="Type Emploi">Employment Type</label>
+                            <select>
+                                <option>Full-time</option>
+                                <option>Part-time</option>
+                                <option>Contract</option>
+                                <option>Internship</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Work Shift" data-ar="نوبة العمل" data-fr="Équipe">Work Shift</label>
+                            <select>
+                                <option>Morning (8 AM - 5 PM)</option>
+                                <option>Evening (2 PM - 11 PM)</option>
+                                <option>Night (10 PM - 7 AM)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Reporting To" data-ar="المدير المباشر" data-fr="Supérieur">Reporting To</label>
+                            <select>
+                                <option value="">Select Manager</option>
+                                <option>Fatima Zahra - HR Manager</option>
+                                <option>Mohamed Amine - Sales Manager</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 25px 0 15px 0;" data-en="Salary Information" data-ar="معلومات الراتب" data-fr="Informations Salaire">Salary Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Base Salary *" data-ar="الراتب الأساسي *" data-fr="Salaire Base *">Base Salary *</label>
+                            <input type="number" required placeholder="0.00" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Payment Method" data-ar="طريقة الدفع" data-fr="Méthode Paiement">Payment Method</label>
+                            <select>
+                                <option>Bank Transfer</option>
+                                <option>Cash</option>
+                                <option>Check</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Bank Account" data-ar="الحساب البنكي" data-fr="Compte Bancaire">Bank Account</label>
+                            <input type="text" placeholder="Bank account number">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Tax ID" data-ar="الرقم الضريبي" data-fr="N° Fiscal">Tax ID</label>
+                            <input type="text" placeholder="Tax identification number">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-en="Address" data-ar="العنوان" data-fr="Adresse">Address</label>
+                        <textarea placeholder="Complete address..." rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addEmployee')">
+                    <i class="fas fa-times"></i>
+                    <span data-en="Cancel" data-ar="إلغاء" data-fr="Annuler">Cancel</span>
+                </button>
+                <button class="btn btn-success" onclick="saveEmployee()">
+                    <i class="fas fa-save"></i>
+                    <span data-en="Save Employee" data-ar="حفظ الموظف" data-fr="Enregistrer Employé">Save Employee</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mark Attendance Modal -->
+    <div id="markAttendance" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-en="Mark Attendance" data-ar="تسجيل الحضور" data-fr="Marquer Présence">Mark Attendance</h2>
+                <div class="close-modal" onclick="closeModal('markAttendance')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="attendanceForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Employee *" data-ar="الموظف *" data-fr="Employé *">Employee *</label>
+                            <select required>
+                                <option value="">Select Employee</option>
+                                <option>Ahmed Benali</option>
+                                <option>Fatima Zahra</option>
+                                <option>Mohamed Amine</option>
+                                <option>Sarah Mansouri</option>
+                                <option>Karim Messaoud</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Date *" data-ar="التاريخ *" data-fr="Date *">Date *</label>
+                            <input type="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Check In Time *" data-ar="وقت الدخول *" data-fr="Heure Arrivée *">Check In Time *</label>
+                            <input type="time" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Check Out Time" data-ar="وقت الخروج" data-fr="Heure Départ">Check Out Time</label>
+                            <input type="time">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Notes" data-ar="ملاحظات" data-fr="Notes">Notes</label>
+                        <textarea placeholder="Additional notes..." rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('markAttendance')">
+                    <i class="fas fa-times"></i>
+                    <span data-en="Cancel" data-ar="إلغاء" data-fr="Annuler">Cancel</span>
+                </button>
+                <button class="btn btn-success" onclick="saveAttendance()">
+                    <i class="fas fa-check"></i>
+                    <span data-en="Mark Attendance" data-ar="تسجيل الحضور" data-fr="Marquer">Mark Attendance</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Leave Request Modal -->
+    <div id="addLeave" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-en="New Leave Request" data-ar="طلب إجازة جديد" data-fr="Nouvelle Demande Congé">New Leave Request</h2>
+                <div class="close-modal" onclick="closeModal('addLeave')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="leaveForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Employee *" data-ar="الموظف *" data-fr="Employé *">Employee *</label>
+                            <select required>
+                                <option value="">Select Employee</option>
+                                <option>Ahmed Benali</option>
+                                <option>Fatima Zahra</option>
+                                <option>Mohamed Amine</option>
+                                <option>Sarah Mansouri</option>
+                                <option>Karim Messaoud</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Leave Type *" data-ar="نوع الإجازة *" data-fr="Type Congé *">Leave Type *</label>
+                            <select required>
+                                <option value="">Select Type</option>
+                                <option>Annual Leave</option>
+                                <option>Sick Leave</option>
+                                <option>Emergency Leave</option>
+                                <option>Maternity Leave</option>
+                                <option>Paternity Leave</option>
+                                <option>Unpaid Leave</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Start Date *" data-ar="تاريخ البداية *" data-fr="Date Début *">Start Date *</label>
+                            <input type="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="End Date *" data-ar="تاريخ النهاية *" data-fr="Date Fin *">End Date *</label>
+                            <input type="date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Reason *" data-ar="السبب *" data-fr="Raison *">Reason *</label>
+                        <textarea required placeholder="Please explain the reason for leave..." rows="4"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addLeave')">
+                    <i class="fas fa-times"></i>
+                    <span data-en="Cancel" data-ar="إلغاء" data-fr="Annuler">Cancel</span>
+                </button>
+                <button class="btn btn-success" onclick="saveLeave()">
+                    <i class="fas fa-paper-plane"></i>
+                    <span data-en="Submit Request" data-ar="إرسال الطلب" data-fr="Soumettre">Submit Request</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Process Payroll Modal -->
+    <div id="processPayroll" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-en="Process Payroll" data-ar="معالجة الرواتب" data-fr="Traiter Paie">Process Payroll</h2>
+                <div class="close-modal" onclick="closeModal('processPayroll')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="payrollProcessForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Payroll Month *" data-ar="شهر الرواتب *" data-fr="Mois Paie *">Payroll Month *</label>
+                            <input type="month" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Payment Date *" data-ar="تاريخ الدفع *" data-fr="Date Paiement *">Payment Date *</label>
+                            <input type="date" required>
+                        </div>
+                    </div>
+                    <div style="background: var(--light-color); padding: 20px; border-radius: 10px; margin-top: 20px;">
+                        <h4 style="margin-bottom: 15px;" data-en="Payroll Summary" data-ar="ملخص الرواتب" data-fr="Résumé Paie">Payroll Summary</h4>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #d1d5db;">
+                            <span data-en="Total Employees:" data-ar="إجمالي الموظفين:" data-fr="Total Employés:">Total Employees:</span>
+                            <strong>48</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #d1d5db;">
+                            <span data-en="Gross Total:" data-ar="الإجمالي الكلي:" data-fr="Total Brut:">Gross Total:</span>
+                            <strong>$165,200</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #d1d5db;">
+                            <span data-en="Total Deductions:" data-ar="إجمالي الخصومات:" data-fr="Total Déductions:">Total Deductions:</span>
+                            <strong style="color: var(--danger-color);">-$19,530</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 15px 0 0 0; font-size: 18px;">
+                            <span data-en="Net Payable:" data-ar="صافي المستحق:" data-fr="Net à Payer:">Net Payable:</span>
+                            <strong style="color: var(--success-color);">$145,670</strong>
+                        </div>
+                    </div>
+                    <div style="background: #fef3c7; padding: 15px; border-radius: 10px; margin-top: 20px; border-left: 4px solid var(--warning-color);">
+                        <p style="color: #92400e;"><i class="fas fa-exclamation-triangle"></i> <strong data-en="Warning:" data-ar="تحذير:" data-fr="Attention:">Warning:</strong> <span data-en="This action will process payroll for all employees. This cannot be undone." data-ar="سيتم معالجة رواتب جميع الموظفين. لا يمكن التراجع عن هذا الإجراء." data-fr="Cette action traitera la paie de tous les employés. Cette action est irréversible.">This action will process payroll for all employees. This cannot be undone.</span></p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('processPayroll')">
+                    <i class="fas fa-times"></i>
+                    <span data-en="Cancel" data-ar="إلغاء" data-fr="Annuler">Cancel</span>
+                </button>
+                <button class="btn btn-success" onclick="confirmProcessPayroll()">
+                    <i class="fas fa-check"></i>
+                    <span data-en="Process Payroll" data-ar="معالجة الرواتب" data-fr="Traiter Paie">Process Payroll</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bonus Modal -->
+    <div id="addBonus" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-en="Add Bonus" data-ar="إضافة مكافأة" data-fr="Ajouter Prime">Add Bonus</h2>
+                <div class="close-modal" onclick="closeModal('addBonus')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="bonusForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-en="Employee *" data-ar="الموظف *" data-fr="Employé *">Employee *</label>
+                            <select required>
+                                <option value="">Select Employee</option>
+                                <option>Ahmed Benali</option>
+                                <option>Fatima Zahra</option>
+                                <option>Mohamed Amine</option>
+                                <option>Sarah Mansouri</option>
+                                <option>Karim Messaoud</option>
+                                <option>All Employees</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Bonus Type *" data-ar="نوع المكافأة *" data-fr="Type Prime *">Bonus Type *</label>
+                            <select required>
+                                <option value="">Select Type</option>
+                                <option>Performance Bonus</option>
+                                <option>Annual Bonus</option>
+                                <option>Project Completion</option>
+                                <option>Holiday Bonus</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Amount *" data-ar="المبلغ *" data-fr="Montant *">Amount *</label>
+                            <input type="number" required placeholder="0.00" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Date *" data-ar="التاريخ *" data-fr="Date *">Date *</label>
+                            <input type="date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Reason" data-ar="السبب" data-fr="Raison">Reason</label>
+                        <textarea placeholder="Reason for bonus..." rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addBonus')">
+                    <i class="fas fa-times"></i>
+                    <span data-en="Cancel" data-ar="إلغاء" data-fr="Annuler">Cancel</span>
+                </button>
+                <button class="btn btn-success" onclick="saveBonus()">
+                    <i class="fas fa-gift"></i>
+                    <span data-en="Add Bonus" data-ar="إضافة مكافأة" data-fr="Ajouter Prime">Add Bonus</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language Translations
+        const translations = {
+            en: {
+                appTitle: 'Zeralda ERP Tools',
+                currentLang: 'English'
+            },
+            ar: {
+                appTitle: 'أدوات زرالدة لتخطيط موارد المؤسسة',
+                currentLang: 'العربية'
+            },
+            fr: {
+                appTitle: 'Outils ERP Zeralda',
+                currentLang: 'Français'
+            }
+        };
+
+        // Change Language Function
+        function changeLanguage(lang) {
+            const body = document.body;
+            const html = document.documentElement;
+            
+            if (lang === 'ar') {
+                body.classList.add('rtl');
+                html.setAttribute('dir', 'rtl');
+                html.setAttribute('lang', 'ar');
+            } else {
+                body.classList.remove('rtl');
+                html.setAttribute('dir', 'ltr');
+                html.setAttribute('lang', lang);
+            }
+
+            document.querySelectorAll('[data-' + lang + ']').forEach(element => {
+                element.textContent = element.getAttribute('data-' + lang);
+            });
+
+            document.querySelectorAll('[data-' + lang + '-placeholder]').forEach(element => {
+                element.placeholder = element.getAttribute('data-' + lang + '-placeholder');
+            });
+
+            document.getElementById('app-title').textContent = translations[lang].appTitle;
+            document.getElementById('current-lang').textContent = translations[lang].currentLang;
+
+            localStorage.setItem('preferred-language', lang);
+        }
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Switch Tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Employee Functions
+        function saveEmployee() {
+            alert('Employee added successfully! ✅\n\nThis is a demo. In production, data will be saved to the database.');
+            closeModal('addEmployee');
+        }
+
+        function viewEmployee(id) {
+            alert('Opening employee #' + id + ' profile...\n\nThis feature will be fully implemented in production.');
+        }
+
+        // Attendance Functions
+        function saveAttendance() {
+            alert('Attendance marked successfully! ✅\n\nThis is a demo. In production, data will be saved to the database.');
+            closeModal('markAttendance');
+        }
+
+        // Leave Functions
+        function saveLeave() {
+            alert('Leave request submitted successfully! ✅\n\nThis is a demo. In production, the request will be sent for approval.');
+            closeModal('addLeave');
+        }
+
+        function viewLeave(id) {
+            alert('Opening leave request #' + id + ' details...\n\nThis feature will be fully implemented in production.');
+        }
+
+        function editLeave(id) {
+            alert('Opening leave request #' + id + ' for editing...\n\nThis feature will be fully implemented in production.');
+            openModal('addLeave');
+        }
+
+        function deleteLeave(id) {
+            if (confirm('Are you sure you want to delete this leave request?')) {
+                alert('Leave request deleted successfully! ✅');
+            }
+        }
+
+        // Payroll Functions
+        function confirmProcessPayroll() {
+            if (confirm('⚠️ Are you sure you want to process payroll for all employees?\n\nThis action cannot be undone.')) {
+                alert('Payroll processed successfully! ✅\n\nAll employees have been paid.\n\nThis is a demo. In production, payments will be recorded in the database.');
+                closeModal('processPayroll');
+            }
+        }
+
+        function viewPayslip(id) {
+            alert('Opening payslip for employee #' + id + '...\n\nThis will generate a PDF payslip in production.');
+        }
+
+        function editPayroll(id) {
+            alert('Opening payroll #' + id + ' for editing...\n\nThis feature will be fully implemented in production.');
+        }
+
+        function saveBonus() {
+            alert('Bonus added successfully! ✅\n\nThis is a demo. In production, the bonus will be added to the next payroll.');
+            closeModal('addBonus');
+        }
+
+        // Initialize Charts
+        window.onload = function() {
+            const savedLang = localStorage.getItem('preferred-language') || 'en';
+            changeLanguage(savedLang);
+
+            // Leave Types Chart
+            const leaveTypesCtx = document.getElementById('leaveTypesChart');
+            if (leaveTypesCtx) {
+                new Chart(leaveTypesCtx.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: ['Annual Leave', 'Sick Leave', 'Emergency', 'Maternity', 'Other'],
+                        datasets: [{
+                            data: [45, 25, 15, 10, 5],
+                            backgroundColor: [
+                                '#2563eb',
+                                '#10b981',
+                                '#f59e0b',
+                                '#8b5cf6',
+                                '#6b7280'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Leave Trend Chart
+            const leaveTrendCtx = document.getElementById('leaveTrendChart');
+            if (leaveTrendCtx) {
+                new Chart(leaveTrendCtx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Leave Requests',
+                            data: [12, 15, 18, 14, 20, 25, 22, 19, 16, 21, 17, 23],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Department Payroll Chart
+            const deptPayrollCtx = document.getElementById('departmentPayrollChart');
+            if (deptPayrollCtx) {
+                new Chart(deptPayrollCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['IT', 'Sales', 'HR', 'Finance', 'Marketing', 'Support'],
+                        datasets: [{
+                            label: 'Payroll ($)',
+                            data: [35000, 42000, 28000, 25000, 20000, 15000],
+                            backgroundColor: '#2563eb',
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Salary Components Chart
+            const salaryCompCtx = document.getElementById('salaryComponentsChart');
+            if (salaryCompCtx) {
+                new Chart(salaryCompCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Base Salary', 'Allowances', 'Bonuses', 'Deductions'],
+                        datasets: [{
+                            data: [72, 15, 8, 5],
+                            backgroundColor: [
+                                '#10b981',
+                                '#06b6d4',
+                                '#8b5cf6',
+                                '#ef4444'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                if (!input.value) {
+                    input.value = today;
+                }
+            });
+        };
+    </script>
+</body>
+</html>
