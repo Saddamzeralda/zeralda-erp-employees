@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>نظام إدارة المبيعات - Zeralda ERP</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="header-left">
+                <img src="../logo.png" alt="Zeralda Logo" class="header-logo">
+                <h1 class="header-title" data-ar="نظام إدارة المبيعات - Zeralda ERP" data-en="Sales Management System - Zeralda ERP" data-fr="Système de Gestion des Ventes - Zeralda ERP">
+                    نظام إدارة المبيعات - Zeralda ERP
+                </h1>
+            </div>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="ar" title="العربية">
+                        <i class="fas fa-language"></i> العربية
+                    </button>
+                    <button class="lang-btn" data-lang="en" title="English">
+                        English
+                    </button>
+                    <button class="lang-btn" data-lang="fr" title="Français">
+                        Français
+                    </button>
+                </div>
+                <button class="user-menu-btn" title="القائمة">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <button class="nav-tab active" data-tab="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span data-ar="لوحة التحكم" data-en="Dashboard" data-fr="Tableau de Bord">لوحة التحكم</span>
+            </button>
+            <button class="nav-tab" data-tab="invoices">
+                <i class="fas fa-file-invoice"></i>
+                <span data-ar="الفواتير" data-en="Invoices" data-fr="Factures">الفواتير</span>
+            </button>
+            <button class="nav-tab" data-tab="reports">
+                <i class="fas fa-chart-bar"></i>
+                <span data-ar="التقارير" data-en="Reports" data-fr="Rapports">التقارير</span>
+            </button>
+            <button class="nav-tab" data-tab="reminders">
+                <i class="fas fa-bell"></i>
+                <span data-ar="التذكيرات" data-en="Reminders" data-fr="Rappels">التذكيرات</span>
+            </button>
+            <button class="nav-tab" data-tab="payments">
+                <i class="fas fa-credit-card"></i>
+                <span data-ar="المدفوعات" data-en="Payments" data-fr="Paiements">المدفوعات</span>
+            </button>
+            <button class="nav-tab" data-tab="customers">
+                <i class="fas fa-users"></i>
+                <span data-ar="العملاء" data-en="Customers" data-fr="Clients">العملاء</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Tab -->
+        <section id="dashboard" class="tab-content active">
+            <div class="dashboard-header">
+                <h2 data-ar="لوحة التحكم" data-en="Dashboard" data-fr="Tableau de Bord">لوحة التحكم</h2>
+                <button class="btn btn-secondary refresh-btn" onclick="refreshDashboard()">
+                    <i class="fas fa-sync-alt"></i>
+                    <span data-ar="تحديث" data-en="Refresh" data-fr="Actualiser">تحديث</span>
+                </button>
+            </div>
+
+            <!-- KPI Container -->
+            <div id="kpi-container" class="kpi-container">
+                <!-- KPIs will be dynamically loaded here -->
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3 data-ar="المبيعات الشهرية" data-en="Monthly Sales" data-fr="Ventes Mensuelles">المبيعات الشهرية</h3>
+                    <canvas id="salesChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3 data-ar="طرق الدفع" data-en="Payment Methods" data-fr="Méthodes de Paiement">طرق الدفع</h3>
+                    <canvas id="paymentMethodsChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3 data-ar="الإيرادات الشهرية" data-en="Monthly Revenue" data-fr="Revenus Mensuels">الإيرادات الشهرية</h3>
+                    <canvas id="monthlyRevenueChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3 data-ar="حالة الفواتير" data-en="Invoice Status" data-fr="État des Factures">حالة الفواتير</h3>
+                    <canvas id="invoiceStatusChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Invoices Tab -->
+        <section id="invoices" class="tab-content">
+            <div class="invoices-header">
+                <h2 data-ar="إدارة الفواتير" data-en="Invoice Management" data-fr="Gestion des Factures">إدارة الفواتير</h2>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="search-filter-section">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="بحث برقم الفاتورة، العميل، أو المبلغ..." 
+                           data-ar="بحث برقم الفاتورة، العميل، أو المبلغ..." 
+                           data-en="Search by invoice number, customer, or amount..." 
+                           data-fr="Rechercher par numéro de facture, client ou montant...">
+                </div>
+                
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label data-ar="من تاريخ" data-en="From Date" data-fr="Date de début">من تاريخ</label>
+                        <input type="date" id="fromDate" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label data-ar="إلى تاريخ" data-en="To Date" data-fr="Date de fin">إلى تاريخ</label>
+                        <input type="date" id="toDate" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label data-ar="الحالة" data-en="Status" data-fr="État">الحالة</label>
+                        <select id="statusFilter" class="filter-input">
+                            <option value="" data-ar="الكل" data-en="All" data-fr="Tous">الكل</option>
+                            <option value="paid" data-ar="مدفوعة" data-en="Paid" data-fr="Payée">مدفوعة</option>
+                            <option value="pending" data-ar="معلقة" data-en="Pending" data-fr="En attente">معلقة</option>
+                            <option value="overdue" data-ar="متأخرة" data-en="Overdue" data-fr="En retard">متأخرة</option>
+                            <option value="cancelled" data-ar="ملغاة" data-en="Cancelled" data-fr="Annulée">ملغاة</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label data-ar="طريقة الدفع" data-en="Payment Method" data-fr="Méthode de paiement">طريقة الدفع</label>
+                        <select id="paymentMethodFilter" class="filter-input">
+                            <option value="" data-ar="الكل" data-en="All" data-fr="Tous">الكل</option>
+                            <option value="cash" data-ar="نقدي" data-en="Cash" data-fr="Espèces">نقدي</option>
+                            <option value="check" data-ar="شيك" data-en="Check" data-fr="Chèque">شيك</option>
+                            <option value="transfer" data-ar="تحويل بنكي" data-en="Bank Transfer" data-fr="Virement">تحويل بنكي</option>
+                            <option value="card" data-ar="بطاقة" data-en="Card" data-fr="Carte">بطاقة</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label data-ar="العميل" data-en="Customer" data-fr="Client">العميل</label>
+                        <select id="customerFilter" class="filter-input">
+                            <option value="" data-ar="الكل" data-en="All" data-fr="Tous">الكل</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="createNewInvoice()">
+                        <i class="fas fa-plus"></i>
+                        <span data-ar="فاتورة جديدة" data-en="New Invoice" data-fr="Nouvelle Facture">فاتورة جديدة</span>
+                    </button>
+                    <button class="btn btn-success" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i>
+                        <span data-ar="تصدير Excel" data-en="Export Excel" data-fr="Exporter Excel">تصدير Excel</span>
+                    </button>
+                    <button class="btn btn-info" onclick="exportToCSV()">
+                        <i class="fas fa-file-csv"></i>
+                        <span data-ar="تصدير CSV" data-en="Export CSV" data-fr="Exporter CSV">تصدير CSV</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Invoices List Container -->
+            <div id="invoicesListContainer" class="invoices-list-container">
+                <!-- Invoices will be dynamically loaded here -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p data-ar="جاري التحميل..." data-en="Loading..." data-fr="Chargement...">جاري التحميل...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reports Tab -->
+        <section id="reports" class="tab-content">
+            <div class="reports-header">
+                <h2 data-ar="التقارير المالية" data-en="Financial Reports" data-fr="Rapports Financiers">التقارير المالية</h2>
+            </div>
+
+            <div class="reports-container">
+                <!-- Monthly Report -->
+                <div class="report-card">
+                    <div class="report-card-header">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3 data-ar="التقرير الشهري" data-en="Monthly Report" data-fr="Rapport Mensuel">التقرير الشهري</h3>
+                    </div>
+                    <div class="report-card-body">
+                        <form id="monthlyReportForm" class="report-form">
+                            <div class="form-group">
+                                <label data-ar="السنة" data-en="Year" data-fr="Année">السنة</label>
+                                <input type="number" id="reportYear" class="form-input" min="2000" max="2100" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-ar="الشهر" data-en="Month" data-fr="Mois">الشهر</label>
+                                <select id="reportMonth" class="form-input" required>
+                                    <option value="1" data-ar="يناير" data-en="January" data-fr="Janvier">يناير</option>
+                                    <option value="2" data-ar="فبراير" data-en="February" data-fr="Février">فبراير</option>
+                                    <option value="3" data-ar="مارس" data-en="March" data-fr="Mars">مارس</option>
+                                    <option value="4" data-ar="أبريل" data-en="April" data-fr="Avril">أبريل</option>
+                                    <option value="5" data-ar="مايو" data-en="May" data-fr="Mai">مايو</option>
+                                    <option value="6" data-ar="يونيو" data-en="June" data-fr="Juin">يونيو</option>
+                                    <option value="7" data-ar="يوليو" data-en="July" data-fr="Juillet">يوليو</option>
+                                    <option value="8" data-ar="أغسطس" data-en="August" data-fr="Août">أغسطس</option>
+                                    <option value="9" data-ar="سبتمبر" data-en="September" data-fr="Septembre">سبتمبر</option>
+                                    <option value="10" data-ar="أكتوبر" data-en="October" data-fr="Octobre">أكتوبر</option>
+                                    <option value="11" data-ar="نوفمبر" data-en="November" data-fr="Novembre">نوفمبر</option>
+                                    <option value="12" data-ar="ديسمبر" data-en="December" data-fr="Décembre">ديسمبر</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-file-pdf"></i>
+                                <span data-ar="إنشاء التقرير" data-en="Generate Report" data-fr="Générer le Rapport">إنشاء التقرير</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Aging Report -->
+                <div class="report-card">
+                    <div class="report-card-header">
+                        <i class="fas fa-clock"></i>
+                        <h3 data-ar="تقرير الذمم المتأخرة" data-en="Aging Report" data-fr="Rapport de Vieillissement">تقرير الذمم المتأخرة</h3>
+                    </div>
+                    <div class="report-card-body">
+                        <p class="report-description" data-ar="تقرير مفصل بالفواتير المتأخرة والمستحقة حسب فترة التأخير" 
+                           data-en="Detailed report of overdue invoices by aging period" 
+                           data-fr="Rapport détaillé des factures en retard par période">
+                            تقرير مفصل بالفواتير المتأخرة والمستحقة حسب فترة التأخير
+                        </p>
+                        <button class="btn btn-warning" onclick="generateAgingReport()">
+                            <i class="fas fa-file-excel"></i>
+                            <span data-ar="إنشاء تقرير الذمم" data-en="Generate Aging Report" data-fr="Générer Rapport">إنشاء تقرير الذمم</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Payment Report -->
+                <div class="report-card">
+                    <div class="report-card-header">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h3 data-ar="تقرير المدفوعات" data-en="Payment Report" data-fr="Rapport de Paiements">تقرير المدفوعات</h3>
+                    </div>
+                    <div class="report-card-body">
+                        <form id="paymentReportForm" class="report-form">
+                            <div class="form-group">
+                                <label data-ar="من تاريخ" data-en="From Date" data-fr="Date de début">من تاريخ</label>
+                                <input type="date" id="paymentFromDate" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-ar="إلى تاريخ" data-en="To Date" data-fr="Date de fin">إلى تاريخ</label>
+                                <input type="date" id="paymentToDate" class="form-input" required>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-file-excel"></i>
+                                <span data-ar="إنشاء التقرير" data-en="Generate Report" data-fr="Générer le Rapport">إنشاء التقرير</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reminders Tab -->
+        <section id="reminders" class="tab-content">
+            <div class="reminders-header">
+                <h2 data-ar="التذكيرات والإشعارات" data-en="Reminders & Notifications" data-fr="Rappels & Notifications">التذكيرات والإشعارات</h2>
+                <button class="btn btn-primary" onclick="sendReminders()">
+                    <i class="fas fa-paper-plane"></i>
+                    <span data-ar="إرسال تذكيرات" data-en="Send Reminders" data-fr="Envoyer Rappels">إرسال تذكيرات</span>
+                </button>
+            </div>
+
+            <div class="reminders-container">
+                <!-- Overdue Invoices Section -->
+                <div class="reminders-section">
+                    <h3 data-ar="الفواتير المتأخرة" data-en="Overdue Invoices" data-fr="Factures en Retard">الفواتير المتأخرة</h3>
+                    <div id="overdueInvoicesList" class="overdue-list">
+                        <!-- Overdue invoices will be loaded here -->
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p data-ar="جاري التحميل..." data-en="Loading..." data-fr="Chargement...">جاري التحميل...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reminders History Section -->
+                <div class="reminders-section">
+                    <h3 data-ar="سجل التذكيرات" data-en="Reminders History" data-fr="Historique des Rappels">سجل التذكيرات</h3>
+                    <div id="remindersHistory" class="reminders-history">
+                        <!-- Reminders history will be loaded here -->
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p data-ar="جاري التحميل..." data-en="Loading..." data-fr="Chargement...">جاري التحميل...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payments Tab -->
+        <section id="payments" class="tab-content">
+            <div class="payments-header">
+                <h2 data-ar="إدارة المدفوعات" data-en="Payment Management" data-fr="Gestion des Paiements">إدارة المدفوعات</h2>
+            </div>
+
+            <!-- Payment Statistics Bar -->
+            <div class="payment-stats-bar">
+                <div class="stat-card">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <div class="stat-info">
+                        <span class="stat-label" data-ar="إجمالي المدفوعات" data-en="Total Payments" data-fr="Total Paiements">إجمالي المدفوعات</span>
+                        <span class="stat-value" id="totalPayments">0 دج</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-credit-card"></i>
+                    <div class="stat-info">
+                        <span class="stat-label" data-ar="مدفوعات اليوم" data-en="Today's Payments" data-fr="Paiements d'aujourd'hui">مدفوعات اليوم</span>
+                        <span class="stat-value" id="todayPayments">0 دج</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-week"></i>
+                    <div class="stat-info">
+                        <span class="stat-label" data-ar="مدفوعات الأسبوع" data-en="This Week" data-fr="Cette Semaine">مدفوعات الأسبوع</span>
+                        <span class="stat-value" id="weekPayments">0 دج</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div class="stat-info">
+                        <span class="stat-label" data-ar="مدفوعات الشهر" data-en="This Month" data-fr="Ce Mois">مدفوعات الشهر</span>
+                        <span class="stat-value" id="monthPayments">0 دج</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment History Container -->
+            <div id="paymentHistoryContainer" class="payment-history-container">
+                <!-- Payment history will be dynamically loaded here -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p data-ar="جاري التحميل..." data-en="Loading..." data-fr="Chargement...">جاري التحميل...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customers Tab -->
+        <section id="customers" class="tab-content">
+            <div class="customers-header">
+                <h2 data-ar="إدارة العملاء" data-en="Customer Management" data-fr="Gestion des Clients">إدارة العملاء</h2>
+                <button class="btn btn-primary" onclick="addNewCustomer()">
+                    <i class="fas fa-user-plus"></i>
+                    <span data-ar="إضافة عميل جديد" data-en="Add New Customer" data-fr="Ajouter Client">إضافة عميل جديد</span>
+                </button>
+            </div>
+
+            <div class="customers-search">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="customerSearchInput" placeholder="بحث عن عميل..." 
+                           data-ar="بحث عن عميل..." 
+                           data-en="Search for customer..." 
+                           data-fr="Rechercher un client...">
+                </div>
+            </div>
+
+            <!-- Customers List Container -->
+            <div id="customersListContainer" class="customers-list-container">
+                <!-- Customers will be dynamically loaded here -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p data-ar="جاري التحميل..." data-en="Loading..." data-fr="Chargement...">جاري التحميل...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="createNewInvoice()" title="فاتورة جديدة">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Modal Container (for dynamic modals) -->
+    <div id="modalContainer"></div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- SheetJS (xlsx) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Application Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/search-filter.js"></script>
+    <script src="js/reminders.js"></script>
+    <script src="js/payments.js"></script>
+
+    <!-- Inline Scripts -->
+    <script>
+        // Tab Switching Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the application
+            initializeApp();
+
+            // Tab Navigation
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                    
+                    // Load tab-specific data
+                    loadTabData(targetTab);
+                });
+            });
+
+            // Language Selector
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    changeLangauge(lang);
+                    
+                    // Update active state
+                    langButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Set current year and month for reports
+            const currentDate = new Date();
+            document.getElementById('reportYear').value = currentDate.getFullYear();
+            document.getElementById('reportMonth').value = currentDate.getMonth() + 1;
+
+            // Monthly Report Form
+            document.getElementById('monthlyReportForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                generateMonthlyReport();
+            });
+
+            // Payment Report Form
+            document.getElementById('paymentReportForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                generatePaymentReport();
+            });
+
+            // Customer Search
+            document.getElementById('customerSearchInput').addEventListener('input', function() {
+                searchCustomers(this.value);
+            });
+
+            // Load initial dashboard data
+            loadTabData('dashboard');
+        });
+
+        // Function to load tab-specific data
+        function loadTabData(tabName) {
+            switch(tabName) {
+                case 'dashboard':
+                    if (typeof loadDashboardData === 'function') {
+                        loadDashboardData();
+                    }
+                    break;
+                case 'invoices':
+                    if (typeof loadInvoices === 'function') {
+                        loadInvoices();
+                    }
+                    break;
+                case 'reminders':
+                    if (typeof loadReminders === 'function') {
+                        loadReminders();
+                    }
+                    break;
+                case 'payments':
+                    if (typeof loadPayments === 'function') {
+                        loadPayments();
+                    }
+                    break;
+                case 'customers':
+                    if (typeof loadCustomers === 'function') {
+                        loadCustomers();
+                    }
+                    break;
+            }
+        }
+
+        // Language Change Function
+        function changeLangauge(lang) {
+            const html = document.documentElement;
+            
+            // Set language and direction
+            html.setAttribute('lang', lang);
+            html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            
+            // Update all elements with data-[lang] attributes
+            document.querySelectorAll('[data-' + lang + ']').forEach(element => {
+                const text = element.getAttribute('data-' + lang);
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    element.placeholder = text;
+                } else if (element.tagName === 'OPTION') {
+                    element.textContent = text;
+                } else {
+                    element.textContent = text;
+                }
+            });
+            
+            // Save language preference
+            localStorage.setItem('preferredLanguage', lang);
+            
+            // Reload current tab data with new language
+            const activeTab = document.querySelector('.nav-tab.active');
+            if (activeTab) {
+                loadTabData(activeTab.getAttribute('data-tab'));
+            }
+        }
+
+        // Initialize Application
+        function initializeApp() {
+            // Load saved language preference
+            const savedLang = localStorage.getItem('preferredLanguage') || 'ar';
+            if (savedLang !== 'ar') {
+                changeLangauge(savedLang);
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.getAttribute('data-lang') === savedLang);
+                });
+            }
+        }
+
+        // Refresh Dashboard
+        function refreshDashboard() {
+            if (typeof loadDashboardData === 'function') {
+                loadDashboardData();
+            }
+        }
+    </script>
+</body>
+</html>

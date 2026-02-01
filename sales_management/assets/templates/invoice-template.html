@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 20px;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2563eb;
+            margin: 0;
+        }
+        .invoice-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .invoice-info-section h3 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .invoice-info-section p {
+            margin: 5px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th {
+            background: #f3f4f6;
+            padding: 12px;
+            text-align: right;
+            border: 1px solid #ddd;
+            font-weight: bold;
+        }
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: right;
+        }
+        .totals {
+            margin-right: auto;
+            width: 300px;
+        }
+        .totals table {
+            width: 100%;
+        }
+        .total-row {
+            background: #f3f4f6;
+            font-weight: bold;
+            font-size: 18px;
+            color: #2563eb;
+        }
+        .notes {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f9fafb;
+            border-right: 4px solid #2563eb;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>فاتورة</h1>
+            <p>نظام إدارة المبيعات - Zeralda ERP</p>
+        </div>
+
+        <!-- Invoice Info -->
+        <div class="invoice-info">
+            <div class="invoice-info-section">
+                <h3>معلومات الفاتورة</h3>
+                <p><strong>رقم الفاتورة:</strong> {{invoiceNumber}}</p>
+                <p><strong>التاريخ:</strong> {{invoiceDate}}</p>
+                <p><strong>تاريخ الاستحقاق:</strong> {{dueDate}}</p>
+                <p><strong>الحالة:</strong> {{status}}</p>
+            </div>
+            <div class="invoice-info-section">
+                <h3>معلومات العميل</h3>
+                <p><strong>{{customerName}}</strong></p>
+                <p>{{customerEmail}}</p>
+                <p>{{customerPhone}}</p>
+                <p>{{customerAddress}}</p>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الوصف</th>
+                    <th>الكمية</th>
+                    <th>سعر الوحدة</th>
+                    <th>المجموع</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#items}}
+                <tr>
+                    <td>{{index}}</td>
+                    <td>{{description}}</td>
+                    <td>{{quantity}}</td>
+                    <td>{{price}}</td>
+                    <td>{{total}}</td>
+                </tr>
+                {{/items}}
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div class="totals">
+            <table>
+                <tr>
+                    <td>المجموع الفرعي:</td>
+                    <td>{{subtotal}}</td>
+                </tr>
+                <tr>
+                    <td>الضريبة (19%):</td>
+                    <td>{{tax}}</td>
+                </tr>
+                <tr class="total-row">
+                    <td>المجموع الإجمالي:</td>
+                    <td>{{total}}</td>
+                </tr>
+                {{#paidAmount}}
+                <tr>
+                    <td style="color: #10b981;">المبلغ المدفوع:</td>
+                    <td style="color: #10b981;">{{paidAmount}}</td>
+                </tr>
+                <tr>
+                    <td style="color: #ef4444;">المبلغ المتبقي:</td>
+                    <td style="color: #ef4444;">{{remainingAmount}}</td>
+                </tr>
+                {{/paidAmount}}
+            </table>
+        </div>
+
+        <!-- Notes -->
+        {{#notes}}
+        <div class="notes">
+            <h4>ملاحظات:</h4>
+            <p>{{notes}}</p>
+        </div>
+        {{/notes}}
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>شكراً لتعاملكم معنا</p>
+            <p>Zeralda ERP - نظام إدارة المبيعات</p>
+        </div>
+    </div>
+</body>
+</html>
